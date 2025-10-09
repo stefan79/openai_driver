@@ -6,34 +6,67 @@ import (
 	"driver/pkg/config"
 	"driver/pkg/net"
 	openAIResp "driver/pkg/openai/response"
+	"driver/pkg/openai/response/resp"
+	"encoding/json"
+	"fmt"
 )
 
 type defaultClient struct {
 	httpClient net.HTTPClient
 }
 
-func NewClient(cfg *config.Config) *defaultClient {
-	return &defaultClient{
-		httpClient: net.NewHTTPClient(cfg),
+func NewClient(cfg *config.Config) (Client, error) {
+	httpClient, err := net.NewHTTPClient(cfg)
+	if err != nil {
+		return nil, err
 	}
+	return &defaultClient{
+		httpClient: httpClient,
+	}, nil
 }
 
-func (c *defaultClient) Create(ctx context.Context, options ...builderResp.ResponseOption) (*openAIResp.ResponsesResponse, error) {
+func (c *defaultClient) Create(ctx context.Context, model string, options ...builderResp.ResponseOption) (*resp.ResponseDef, error) {
 	//Add a mapper function which creates the openAI Request from the ResponseRequest
 
-	requestBody := openAIResp.ResponsesRequest{}
+	responsesRequest := openAIResp.ResponsesRequest{
+		Model: &model,
+	}
 	for _, option := range options {
-		option(&requestBody)
+		option(&responsesRequest)
+	}
+	httpRequestBody, err := json.Marshal(responsesRequest)
+	if err != nil {
+		return nil, err
 	}
 	request := net.OpenAIRequest{
-		Path: "/v1/chat/completions",
+		Path:   "/v1/responses",
+		Method: "POST",
+		Body:   httpRequestBody,
 	}
 
-	_, err := c.httpClient.Do(ctx, &request)
+	httpResponse, err := c.httpClient.Do(ctx, &request)
 	if err != nil {
 		return nil, err
 	}
 
-	return &openAIResp.ResponsesResponse{}, nil
+	response := &resp.ResponseDef{}
+	err = json.Unmarshal(httpResponse.Body, response)
+	if err != nil {
+		fmt.Printf("Unmarshalling error: %e\n", err)
+		return nil, err
+	}
 
+	return response, nil
+}
+
+func (c *defaultClient) CreateStream(ctx context.Context, model string, options ...builderResp.ResponseOption) (*StreamReader, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (c *defaultClient) Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (c *defaultClient) Cancel(ctx context.Context, responseId string) error {
+	return fmt.Errorf("not implemented")
 }

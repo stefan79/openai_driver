@@ -4,7 +4,7 @@ import (
 	"context"
 
 	builderResp "driver/pkg/builder/response"
-	openAIResp "driver/pkg/openai/response"
+	"driver/pkg/openai/response/resp"
 )
 
 type StreamEvent struct {
@@ -17,18 +17,18 @@ type StreamReader interface {
 }
 
 type TypedResponse[T any] struct {
-	*openAIResp.ResponsesResponse
+	*resp.ResponseDef
 	ParsedOutput T
 }
 
 type Client interface {
-	Create(ctx context.Context, options ...builderResp.ResponseOption) (*openAIResp.ResponsesResponse, error)
-	CreateStream(ctx context.Context, options ...builderResp.ResponseOption) (*StreamReader, error)
-	Retrieve(ctx context.Context, responseId string) (*openAIResp.ResponsesResponse, error)
+	Create(ctx context.Context, model string, options ...builderResp.ResponseOption) (*resp.ResponseDef, error)
+	CreateStream(ctx context.Context, model string, options ...builderResp.ResponseOption) (*StreamReader, error)
+	Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error)
 	Cancel(ctx context.Context, responseId string) error
 }
 
 type TypedClient[T any] interface {
-	Create(ctx context.Context, options ...builderResp.ResponseOption) (*TypedResponse[T], error)
+	Create(ctx context.Context, model string, options ...builderResp.ResponseOption) (*TypedResponse[T], error)
 	Retrieve(ctx context.Context, responseId string) (*TypedResponse[T], error)
 }
