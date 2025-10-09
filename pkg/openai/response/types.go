@@ -1,4 +1,4 @@
-package openai
+package response
 
 type Includes string
 
@@ -191,6 +191,9 @@ const (
 	TruncactionDisabled Truncaction = "disabled"
 	TruncactionAuto     Truncaction = "auto"
 )
+
+type ResponsesResponse struct {
+}
 
 // Skipped Tools for now
 type ResponsesRequest struct {
