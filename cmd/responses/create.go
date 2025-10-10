@@ -1,7 +1,7 @@
 package responses
 
 import (
-	"driver/pkg/builder/response"
+	"driver/pkg/builder/responses"
 	"driver/pkg/cli"
 	"driver/pkg/client"
 	"driver/pkg/config"
@@ -44,7 +44,7 @@ var CreateResponseCmd = &cobra.Command{
 			fmt.Printf("Error creating client: %v\n", err)
 			return
 		}
-		input := response.WithTextInput(o.prompt)
+		input := responses.WithTextInput(o.prompt)
 		resp, err := client.Create(cmd.Context(), o.model, input)
 		if err != nil {
 			fmt.Printf("Error creating response: %v\n", err)

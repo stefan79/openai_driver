@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 
-	builderResp "driver/pkg/builder/response"
-	"driver/pkg/openai/response/resp"
+	builderResp "driver/pkg/builder/responses"
+	"driver/pkg/openai/responses/resp"
 )
 
 type StreamEvent struct {

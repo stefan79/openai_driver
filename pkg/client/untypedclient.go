@@ -2,10 +2,10 @@ package client
 
 import (
 	"context"
-	builderResp "driver/pkg/builder/response"
+	builderResp "driver/pkg/builder/responses"
 	"driver/pkg/net"
-	openAIResp "driver/pkg/openai/response"
-	"driver/pkg/openai/response/resp"
+	openAIResp "driver/pkg/openai/responses"
+	"driver/pkg/openai/responses/resp"
 	"encoding/json"
 	"fmt"
 )
