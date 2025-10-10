@@ -3,7 +3,6 @@ package client
 import (
 	"context"
 	builderResp "driver/pkg/builder/response"
-	"driver/pkg/config"
 	"driver/pkg/net"
 	openAIResp "driver/pkg/openai/response"
 	"driver/pkg/openai/response/resp"
@@ -15,8 +14,8 @@ type defaultClient struct {
 	httpClient net.HTTPClient
 }
 
-func NewClient(cfg *config.Config) (Client, error) {
-	httpClient, err := net.NewHTTPClient(cfg)
+func NewClient(openApiKey string, baseUrl string, proxy *string) (Client, error) {
+	httpClient, err := net.NewHTTPClient(openApiKey, baseUrl, proxy)
 	if err != nil {
 		return nil, err
 	}

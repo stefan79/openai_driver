@@ -1,0 +1,29 @@
+run:
+  timeout: 3m
+  tests: true
+
+linters:
+  enable:
+    - revive          # replaces golint (golint is deprecated)
+    - govet
+    - staticcheck
+    - gocyclo
+    - ineffassign
+    - unused
+    - gosimple
+    - prealloc
+    - errcheck
+    - dupl
+
+linters-settings:
+  gocyclo:
+    min-complexity: 12
+  dupl:
+    threshold: 100
+  revive:
+    confidence: 0.8
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0

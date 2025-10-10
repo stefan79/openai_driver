@@ -37,3 +37,6 @@ Thumbs.db
 /driver
 /bin/
 /dist/
+
+# Config Files
+oai.yaml

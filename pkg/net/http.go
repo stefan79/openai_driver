@@ -3,9 +3,9 @@ package net
 import (
 	"bytes"
 	"context"
-	"driver/pkg/config"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -16,16 +16,14 @@ type defaultHTTPClient struct {
 	baseUrl string
 }
 
-func NewHTTPClient(cfg *config.Config) (HTTPClient, error) {
+func NewHTTPClient(openApiKey string, baseUrl string, proxy *string) (HTTPClient, error) {
 	client := defaultHTTPClient{
-		client: &http.Client{
-			Timeout: cfg.TimeOut,
-		},
-		apiKey:  cfg.OpenaiApiKey,
-		baseUrl: cfg.BaseUrl,
+		client:  &http.Client{},
+		apiKey:  openApiKey,
+		baseUrl: baseUrl,
 	}
-	if cfg.Proxy != nil {
-		url, err := url.Parse(*cfg.Proxy)
+	if proxy != nil {
+		url, err := url.Parse(*proxy)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +44,12 @@ func (c *defaultHTTPClient) Do(ctx context.Context, req *OpenAIRequest) (*OpenAI
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			// Log the error if closing the body fails
+			log.Printf("error closing response body: %v", err)
+		}
+	}()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("error code: %d", resp.StatusCode)
 	}

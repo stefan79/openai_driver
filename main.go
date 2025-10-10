@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "driver/cmd"
 
 func main() {
-	fmt.Println("Hello, Driver!")
+	cmd.Execute()
 }
