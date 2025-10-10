@@ -34,13 +34,17 @@ var CreateResponseCmd = &cobra.Command{
 	Short: "Create a response",
 	Long:  `Create a response`,
 	Run: func(cmd *cobra.Command, args []string) {
-		o := overlayCreateFlags(cmd, config.GetCfg(cmd))
+		o, err := overlayCreateFlags(cmd, config.GetCfg(cmd))
+		if err != nil {
+			fmt.Printf("Error overlaying flags: %v\n", err)
+			return
+		}
 		client, err := client.NewClient(o.openAIAPIKey, o.baseUrl, o.proxy)
 		if err != nil {
 			fmt.Printf("Error creating client: %v\n", err)
 			return
 		}
-		input := response.WithTextInput("What is the capital of France?")
+		input := response.WithTextInput(o.prompt)
 		resp, err := client.Create(cmd.Context(), o.model, input)
 		if err != nil {
 			fmt.Printf("Error creating response: %v\n", err)
