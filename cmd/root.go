@@ -41,6 +41,7 @@ func initConfig(cmd *cobra.Command, _ []string) error {
 	// 1) Defaults to Set
 	cfg.OpenAI.BaseUrl = "https://api.openai.com"
 	cfg.OpenAI.Model = "gpt-5"
+	cfg.Console.Output = "json"
 
 	// 2) ConfigFiles
 	if cfgFile != "" {

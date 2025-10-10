@@ -2,9 +2,11 @@ package responses
 
 import (
 	"driver/pkg/builder/response"
+	"driver/pkg/cli"
 	"driver/pkg/client"
 	"driver/pkg/config"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -14,6 +16,7 @@ var (
 	proxy        string
 	baseUrl      string
 	model        string
+	output       string
 )
 
 type createOptions struct {
@@ -21,6 +24,7 @@ type createOptions struct {
 	proxy        *string
 	baseUrl      string
 	model        string
+	output       string
 }
 
 var CreateResponseCmd = &cobra.Command{
@@ -40,7 +44,11 @@ var CreateResponseCmd = &cobra.Command{
 			fmt.Printf("Error creating response: %v\n", err)
 			return
 		}
-		fmt.Printf("Response: %v\n", resp)
+		err = cli.DumpOutput(resp, o.output, os.Stdout)
+		if err != nil {
+			fmt.Printf("Error creating response: %v\n", err)
+			return
+		}
 	},
 }
 
@@ -49,6 +57,7 @@ func init() {
 	CreateResponseCmd.Flags().StringVar(&proxy, "proxy", "", "Proxy")
 	CreateResponseCmd.Flags().StringVar(&model, "model", "", "Model")
 	CreateResponseCmd.Flags().StringVar(&baseUrl, "base-url", "", "Base URL")
+	CreateResponseCmd.Flags().StringVar(&output, "output", "", "Output")
 }
 
 func overlayCreateFlags(cmd *cobra.Command, base *config.Config) createOptions {
@@ -57,6 +66,7 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) createOptions {
 		proxy:        base.HttpConfig.Proxy,
 		baseUrl:      base.OpenAI.BaseUrl,
 		model:        base.OpenAI.Model,
+		output:       base.Console.Output,
 	}
 	if cmd.Flags().Changed("openai-api-key") {
 		o.openAIAPIKey = openAIAPIKey
@@ -69,6 +79,9 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) createOptions {
 	}
 	if cmd.Flags().Changed("base-url") {
 		o.baseUrl = baseUrl
+	}
+	if cmd.Flags().Changed("output") {
+		o.output = output
 	}
 	return o
 }

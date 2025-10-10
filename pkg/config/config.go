@@ -13,6 +13,7 @@ const cfgKey ctxKey = 1
 type Config struct {
 	OpenAI     OpenAIConfig `mapstructure:"openai"`
 	HttpConfig HttpConfig   `mapstructure:"http"`
+	Console    Console      `mapstructure:"console"`
 }
 
 type OpenAIConfig struct {
@@ -23,6 +24,10 @@ type OpenAIConfig struct {
 
 type HttpConfig struct {
 	Proxy *string `mapstructure:"proxy"`
+}
+
+type Console struct {
+	Output string `mapstructure:"output"`
 }
 
 func GetCfg(cmd *cobra.Command) *Config {
