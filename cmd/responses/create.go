@@ -17,6 +17,7 @@ var (
 	baseUrl      string
 	model        string
 	output       string
+	prompt       string
 )
 
 type createOptions struct {
@@ -25,6 +26,7 @@ type createOptions struct {
 	baseUrl      string
 	model        string
 	output       string
+	prompt       string
 }
 
 var CreateResponseCmd = &cobra.Command{
@@ -58,9 +60,10 @@ func init() {
 	CreateResponseCmd.Flags().StringVar(&model, "model", "", "Model")
 	CreateResponseCmd.Flags().StringVar(&baseUrl, "base-url", "", "Base URL")
 	CreateResponseCmd.Flags().StringVar(&output, "output", "", "Output")
+	CreateResponseCmd.Flags().StringVar(&prompt, "prompt", "", "Prompt")
 }
 
-func overlayCreateFlags(cmd *cobra.Command, base *config.Config) createOptions {
+func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions, error) {
 	o := createOptions{
 		openAIAPIKey: base.OpenAI.APIKey,
 		proxy:        base.HttpConfig.Proxy,
@@ -83,5 +86,11 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) createOptions {
 	if cmd.Flags().Changed("output") {
 		o.output = output
 	}
-	return o
+	if cmd.Flags().Changed("prompt") {
+		o.prompt = prompt
+	} else {
+		return o, fmt.Errorf("prompt is required")
+	}
+
+	return o, nil
 }
