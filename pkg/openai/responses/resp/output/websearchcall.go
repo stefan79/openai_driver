@@ -23,7 +23,7 @@ const (
 
 // Used here /response/output[@type=web_search_call]/action
 type BaseTypeWebSearchCallAction interface {
-	actionType() TypeWebSearchCallActionTypeEnum
+	ActionType() TypeWebSearchCallActionTypeEnum
 }
 
 // Used here /response/output[@type=web_search_call]/action[@type=search]
@@ -33,7 +33,7 @@ type TypeWebSearchCallActionTypeSearchDef struct {
 	Sources []TypeWebSearchCallActionTypeSearchSource `json:"sources"`
 }
 
-func (t TypeWebSearchCallActionTypeSearchDef) actionType() TypeWebSearchCallActionTypeEnum {
+func (t TypeWebSearchCallActionTypeSearchDef) ActionType() TypeWebSearchCallActionTypeEnum {
 	return TypeWebSearchCallActionTypeSearch
 }
 
@@ -49,7 +49,7 @@ type TypeWebSearchCallActionTypeOpenPageDef struct {
 	Url  string                          `json:"url"`
 }
 
-func (t TypeWebSearchCallActionTypeOpenPageDef) actionType() TypeWebSearchCallActionTypeEnum {
+func (t TypeWebSearchCallActionTypeOpenPageDef) ActionType() TypeWebSearchCallActionTypeEnum {
 	return TypeWebSearchCallActionTypeOpenPage
 }
 
@@ -58,4 +58,8 @@ type TypeWebSearchCallActionTypeFindDef struct {
 	Type    TypeWebSearchCallActionTypeEnum `json:"type"`
 	Pattern string                          `json:"pattern"`
 	Url     string                          `json:"url"`
+}
+
+func (t TypeWebSearchCallActionTypeFindDef) ActionType() TypeWebSearchCallActionTypeEnum {
+	return TypeWebSearchCallActionTypeFind
 }

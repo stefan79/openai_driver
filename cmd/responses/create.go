@@ -13,28 +13,32 @@ import (
 )
 
 var (
-	openAIAPIKey string
-	proxy        string
-	baseUrl      string
-	model        string
-	output       string
-	prompt       string
-	effort       string
-	summary      string
-	file         string
+	openAIAPIKey         string
+	proxy                string
+	baseUrl              string
+	model                string
+	output               string
+	prompt               string
+	effort               string
+	summary              string
+	file                 string
+	webSearch            bool
+	webSearchContextSize string
 )
 
 type createOptions struct {
-	openAIAPIKey string
-	proxy        *string
-	baseUrl      string
-	model        string
-	output       string
-	prompt       string
-	effort       *responses.Effort
-	summary      *responses.Summary
-	fileName     *string
-	fileData     []byte
+	openAIAPIKey         string
+	proxy                *string
+	baseUrl              string
+	model                string
+	output               string
+	prompt               string
+	effort               *responses.Effort
+	summary              *responses.Summary
+	fileName             *string
+	fileData             []byte
+	webSearch            bool
+	webSearchContextSize *responses.WebSearchContextSize
 }
 
 var CreateResponseCmd = &cobra.Command{
@@ -63,6 +67,12 @@ var CreateResponseCmd = &cobra.Command{
 		if o.fileName != nil {
 			options = append(options, responses.WithFileInput(*o.fileName, o.fileData))
 		}
+		if o.webSearch {
+			options = append(options, responses.WithWebSearch())
+		}
+		if o.webSearchContextSize != nil {
+			options = append(options, responses.WithWebSearchContextSize(*o.webSearchContextSize))
+		}
 		r, err := client.Create(cmd.Context(), o.model, options...)
 		if err != nil {
 			fmt.Printf("Error creating response: %v\n", err)
@@ -89,7 +99,8 @@ func init() {
 	CreateResponseCmd.Flags().StringVar(&effort, "effort", "", "Effort")
 	CreateResponseCmd.Flags().StringVar(&summary, "summary", "", "Summary")
 	CreateResponseCmd.Flags().StringVar(&file, "file", "", "File Name")
-
+	CreateResponseCmd.Flags().BoolVar(&webSearch, "web-search", true, "Web Search")
+	CreateResponseCmd.Flags().StringVar(&webSearchContextSize, "web-search-context-size", "", "Web Search Context Size")
 }
 
 func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions, error) {
@@ -120,6 +131,13 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions,
 	} else {
 		return o, fmt.Errorf("prompt is required")
 	}
+	if cmd.Flags().Changed("web-search-context-size") {
+		webSearchContextSize, err := responses.ParseReasoningSummaryWebSearchContextSize(webSearchContextSize)
+		if err != nil {
+			return o, err
+		}
+		o.webSearchContextSize = &webSearchContextSize
+	}
 
 	if cmd.Flags().Changed("effort") {
 		effort, err := responses.ParseReasoningEffort(effort)
@@ -142,6 +160,9 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions,
 		}
 		o.fileName = &file
 		o.fileData = data
+	}
+	if cmd.Flags().Changed("web-search") {
+		o.webSearch = true
 	}
 
 	return o, nil

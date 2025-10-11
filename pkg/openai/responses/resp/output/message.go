@@ -52,7 +52,7 @@ func (t TypeMessageContentTypeOutputTextDef) ContentType() TypeMessageContentTyp
 
 // Used at Used at /response/output[@type=message]/content[@type=output_text]/annotations
 type BaseTypeMessageContentTypeOutputTextAnnotations interface {
-	annotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum
+	AnnotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum
 }
 
 // Used at /response/output[@type=message]/content[@type=output_text]/annotations/type
@@ -73,7 +73,7 @@ type TypeMessageContentTypeOutputTextAnnotationsFileCitationDef struct {
 	Index    int                                                 `json:"file_index"`
 }
 
-func (t TypeMessageContentTypeOutputTextAnnotationsFileCitationDef) annotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
+func (t TypeMessageContentTypeOutputTextAnnotationsFileCitationDef) AnnotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
 	return TypeMessageContentTypeOutputTextAnnotationsTypeFileCitation
 }
 
@@ -86,7 +86,7 @@ type OutputContentMessageTextAnnotationUrlCitation struct {
 	Url        string                                              `json:"url"`
 }
 
-func (t OutputContentMessageTextAnnotationUrlCitation) annotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
+func (t OutputContentMessageTextAnnotationUrlCitation) AnnotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
 	return TypeMessageContentTypeOutputTextAnnotationsTypeUrlCitation
 }
 
@@ -100,7 +100,7 @@ type OutputContentMessageTextAnnotationContainerFilerCitation struct {
 	FileName    string                                              `json:"filename"`
 }
 
-func (t OutputContentMessageTextAnnotationContainerFilerCitation) annotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
+func (t OutputContentMessageTextAnnotationContainerFilerCitation) AnnotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
 	return TypeMessageContentTypeOutputTextAnnotationsTypeContainerFileCitation
 }
 
@@ -111,7 +111,7 @@ type OutputContentMessageTextAnnotationFilePath struct {
 	Index  int                                                 `json:"file_index"`
 }
 
-func (t OutputContentMessageTextAnnotationFilePath) annotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
+func (t OutputContentMessageTextAnnotationFilePath) AnnotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
 	return TypeMessageContentTypeOutputTextAnnotationsTypeFilePath
 }
 

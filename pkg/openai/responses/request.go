@@ -211,4 +211,51 @@ type ResponsesRequest struct {
 	TopLogProbs        *int               `json:"top_logprobs,omitempty"`
 	TopP               *int               `json:"top_p,omitempty"`
 	Truncation         *Truncaction       `json:"truncation,omitempty"`
+	Tools              *[]BaseToolType    `json:"tools,omitempty"`
+}
+
+type ToolType string
+
+const (
+	ToolTypeCodeInterpreter    ToolType = "code_interpreter"
+	ToolTypeFileSearch         ToolType = "file_search"
+	ToolTypeWebSearch          ToolType = "web_search"
+	ToolTypeComputerUsePreview ToolType = "computer_use_preview"
+	ToolTypeMCP                ToolType = "mcp"
+	ToolTypeImageGeneration    ToolType = "image_generation"
+)
+
+type ToolTypleWebSearchSearchContextSize string
+
+const (
+	ToolTypleWebSearchSearchContextSizeLow    ToolTypleWebSearchSearchContextSize = "low"
+	ToolTypleWebSearchSearchContextSizeMedium ToolTypleWebSearchSearchContextSize = "medium"
+	ToolTypleWebSearchSearchContextSizeHigh   ToolTypleWebSearchSearchContextSize = "high"
+)
+
+// Used in /request/tools/type
+type BaseToolType interface {
+	ToolType() ToolType
+}
+
+// Used in /request/tools[@type=web_search]
+type ToolTypeWebSearchDef struct {
+	Type              ToolType                             `json:"type"`
+	SearchContextSize *ToolTypleWebSearchSearchContextSize `json:"search_context_size,omitempty"`
+	Filters           *ToolTypeWebSearchFiltersDef         `json:"filters,omitempty"`
+	UserLocation      *ToolTypeWebSearchSearchLocationDef  `json:"user_location,omitempty"`
+}
+
+func (t ToolTypeWebSearchDef) ToolType() ToolType { return ToolTypeWebSearch }
+
+type ToolTypeWebSearchFiltersDef struct {
+	AllowedDomains []string `json:"allowed_domains,omitempty"`
+}
+
+type ToolTypeWebSearchSearchLocationDef struct {
+	City     *string `json:"city,omitempty"`
+	Country  *string `json:"country,omitempty"`
+	Region   *string `json:"region,omitempty"`
+	Timezone *string `json:"timezone,omitempty"`
+	Type     *string `json:"type,omitempty"`
 }
