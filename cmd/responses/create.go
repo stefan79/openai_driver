@@ -18,6 +18,8 @@ var (
 	model        string
 	output       string
 	prompt       string
+	effort       string
+	summary      string
 )
 
 type createOptions struct {
@@ -27,6 +29,8 @@ type createOptions struct {
 	model        string
 	output       string
 	prompt       string
+	effort       *responses.Effort
+	summary      *responses.Summary
 }
 
 var CreateResponseCmd = &cobra.Command{
@@ -44,9 +48,15 @@ var CreateResponseCmd = &cobra.Command{
 			fmt.Printf("Error creating client: %v\n", err)
 			return
 		}
-		input := responses.WithTextInput(o.prompt)
-		reasoning := responses.WithReasoning(responses.EffortMinimal, responses.SummaryNone)
-		r, err := client.Create(cmd.Context(), o.model, input, reasoning)
+		options := []responses.ResponseOption{}
+		options = append(options, responses.WithTextInput(o.prompt))
+		if o.effort != nil {
+			options = append(options, responses.WithReasoningEffort(*o.effort))
+		}
+		if o.summary != nil {
+			options = append(options, responses.WithReasoningSummary(*o.summary))
+		}
+		r, err := client.Create(cmd.Context(), o.model, options...)
 		if err != nil {
 			fmt.Printf("Error creating response: %v\n", err)
 			return
@@ -69,6 +79,8 @@ func init() {
 	CreateResponseCmd.Flags().StringVar(&baseUrl, "base-url", "", "Base URL")
 	CreateResponseCmd.Flags().StringVar(&output, "output", "", "Output")
 	CreateResponseCmd.Flags().StringVar(&prompt, "prompt", "", "Prompt")
+	CreateResponseCmd.Flags().StringVar(&effort, "effort", "", "Effort")
+	CreateResponseCmd.Flags().StringVar(&summary, "summary", "", "Summary")
 }
 
 func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions, error) {
@@ -98,6 +110,21 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions,
 		o.prompt = prompt
 	} else {
 		return o, fmt.Errorf("prompt is required")
+	}
+
+	if cmd.Flags().Changed("effort") {
+		effort, err := responses.ParseReasoningEffort(effort)
+		if err != nil {
+			return o, err
+		}
+		o.effort = &effort
+	}
+	if cmd.Flags().Changed("summary") {
+		summary, err := responses.ParseReasoningSummary(summary)
+		if err != nil {
+			return o, err
+		}
+		o.summary = &summary
 	}
 
 	return o, nil

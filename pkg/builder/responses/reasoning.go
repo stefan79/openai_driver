@@ -1,57 +1,78 @@
 package responses
 
-import "driver/pkg/openai/responses"
+import (
+	"driver/pkg/openai/responses"
+	"fmt"
+)
 
 type (
-	Effort  byte
-	Summary byte
+	Effort  string
+	Summary string
 )
 
 const (
-	EffortMinimal Effort = iota
-	EffortLow
-	EffortMedium
-	EffortHigh
+	MinimalEffort Effort = "minimal"
+	LowEffort     Effort = "low"
+	MediumEffort  Effort = "medium"
+	HighEffort    Effort = "high"
+
+	AutoSummary     Summary = "auto"
+	ConciseSummary  Summary = "concise"
+	DetailedSummary Summary = "detailed"
 )
 
-const (
-	SummaryNone Summary = iota
-	SummaryAuto
-	SummaryConcise
-	SummaryDetailed
-)
+func ParseReasoningEffort(i string) (Effort, error) {
+	switch i {
+	case "minimal":
+		return MinimalEffort, nil
+	case "low":
+		return LowEffort, nil
+	case "medium":
+		return MediumEffort, nil
+	case "high":
+		return HighEffort, nil
+	default:
+		return "", fmt.Errorf("invalid effort: %s", i)
+	}
+}
 
-func WithReasoning(e Effort, s Summary) ResponseOption {
+func ParseReasoningSummary(i string) (Summary, error) {
+	switch i {
+	case "auto":
+		return AutoSummary, nil
+	case "concise":
+		return ConciseSummary, nil
+	case "detailed":
+		return DetailedSummary, nil
+	default:
+		return "", fmt.Errorf("invalid summary: %s", i)
+	}
+}
+
+func (e Effort) ToReasoningEffort() *responses.ReasoningEffort {
+	out := responses.ReasoningEffort(e)
+	return &out
+}
+
+func (s Summary) ToReasoningSummary() *responses.ReasoningSummary {
+	out := responses.ReasoningSummary(s)
+	return &out
+}
+
+func WithReasoningEffort(e Effort) ResponseOption {
 	return func(r *responses.ResponsesRequest) {
-		var rEff responses.ReasoningEffort
-		var rSum responses.ReasoningSummary
-		switch e {
-		case EffortMinimal:
-			rEff = responses.ReasoningEffortMinimal
-		case EffortLow:
-			rEff = responses.ReasoningEffortLow
-		case EffortMedium:
-			rEff = responses.ReasoningEffortMedium
-		case EffortHigh:
-			rEff = responses.ReasoningEffortHigh
+		if r.Reasoning == nil {
+			r.Reasoning = &responses.Reasoning{}
 		}
-		if s == SummaryNone {
-			r.Reasoning = &responses.Reasoning{
-				Effort: &rEff,
-			}
-			return
+		r.Reasoning.Effort = e.ToReasoningEffort()
+	}
+}
+
+func WithReasoningSummary(s Summary) ResponseOption {
+	return func(r *responses.ResponsesRequest) {
+		if r.Reasoning == nil {
+			r.Reasoning = &responses.Reasoning{}
 		}
-		switch s {
-		case SummaryAuto:
-			rSum = responses.ReasoningSummaryAuto
-		case SummaryConcise:
-			rSum = responses.ReasoningSummaryConcise
-		case SummaryDetailed:
-			rSum = responses.ReasoningSummaryDetailed
-		}
-		r.Reasoning = &responses.Reasoning{
-			Effort:  &rEff,
-			Summary: &rSum,
-		}
+		r.Reasoning.Summary = s.ToReasoningSummary()
 	}
 }
