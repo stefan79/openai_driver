@@ -14,7 +14,7 @@ const (
 )
 
 type InputContent interface {
-	contentType() InputContentType
+	ContentType() InputContentType
 }
 
 // TextContent represents text input
@@ -23,7 +23,7 @@ type TextInputContent struct {
 	Text string           `json:"text"`
 }
 
-func (t TextInputContent) contentType() InputContentType { return InputContentTypeText }
+func (t TextInputContent) ContentType() InputContentType { return InputContentTypeText }
 
 // FileContent represents file input
 type FileInputContent struct {
@@ -34,7 +34,7 @@ type FileInputContent struct {
 	FileName *string             `json:"filename,omitempty"`
 }
 
-func (t FileInputContent) contentType() InputContentType { return InputContentTypeFile }
+func (t FileInputContent) ContentType() InputContentType { return InputContentTypeFile }
 
 type ImageDetail string
 
@@ -52,7 +52,7 @@ type ImageInputContent struct {
 	ImageUrl    *string          `json:"image_url,omitempty"`
 }
 
-func (t ImageInputContent) contentType() InputContentType { return InputContentTypeImage }
+func (t ImageInputContent) ContentType() InputContentType { return InputContentTypeImage }
 
 type AudioFormat string
 
@@ -72,7 +72,7 @@ type AudioInputContent struct {
 	AudioInput AudioInput       `json:"audio_input"`
 }
 
-func (t AudioInputContent) contentType() InputContentType { return InputContentTypeAudio }
+func (t AudioInputContent) ContentType() InputContentType { return InputContentTypeAudio }
 
 const (
 	WebSearchSources            Includes = "web_search_call.action.sources"
