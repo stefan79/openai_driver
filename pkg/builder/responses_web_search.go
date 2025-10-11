@@ -8,9 +8,9 @@ import (
 type WebSearchContextSize string
 
 const (
-	WebSearchEffortLow    WebSearchContextSize = "low"
-	WebSearchEffortMedium WebSearchContextSize = "medium"
-	EffortHigh            Effort               = "high"
+	WebSearchEffortLow    WebSearchContextSize     = "low"
+	WebSearchEffortMedium WebSearchContextSize     = "medium"
+	EffortHigh            ResponsesReasoningEffort = "high"
 )
 
 func responsesWithWebSearch() ResponsesOption {
@@ -34,7 +34,7 @@ func responsesWithWebSearch() ResponsesOption {
 	}
 }
 
-func ParseReasoningSummaryWebSearchContextSize(i string) (WebSearchContextSize, error) {
+func ParseWebSearchContextSize(i string) (WebSearchContextSize, error) {
 	switch i {
 	case "low":
 		return WebSearchEffortLow, nil
@@ -43,11 +43,6 @@ func ParseReasoningSummaryWebSearchContextSize(i string) (WebSearchContextSize, 
 	default:
 		return "", fmt.Errorf("invalid context size: %s", i)
 	}
-}
-
-func ToWebSearchContextSize(e WebSearchContextSize) *responses.ToolTypleWebSearchSearchContextSize {
-	out := responses.ToolTypleWebSearchSearchContextSize(e)
-	return &out
 }
 
 func responsesWithWebSearchContextSize(e WebSearchContextSize) ResponsesOption {
@@ -68,6 +63,11 @@ func responsesWithWebSearchContextSize(e WebSearchContextSize) ResponsesOption {
 			}
 			*r.Tools = append(*r.Tools, ws)
 		}
-		ws.SearchContextSize = ToWebSearchContextSize(e)
+		ws.SearchContextSize = toWebSearchContextSize(e)
 	}
+}
+
+func toWebSearchContextSize(e WebSearchContextSize) *responses.ToolTypleWebSearchSearchContextSize {
+	out := responses.ToolTypleWebSearchSearchContextSize(e)
+	return &out
 }

@@ -107,14 +107,14 @@ func TestResponsesCreateCommand_WithReasoningEffort(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var receivedEffort builder.Effort
+	var receivedEffort builder.ResponsesReasoningEffort
 
 	mockClient := &mockClient{
 		createFunc: clientCreateMockFunction,
 	}
 
 	registry := &mockRegistry{
-		ReasoningEffortFunc: func(e builder.Effort) builder.ResponsesOption {
+		ReasoningEffortFunc: func(e builder.ResponsesReasoningEffort) builder.ResponsesOption {
 			receivedEffort = e
 			return nil
 		},
@@ -141,7 +141,7 @@ func TestResponsesCreateCommand_WithReasoningSummary(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var receivedSummary builder.Summary
+	var receivedSummary builder.ResponsesReasoningSummary
 
 	o := ResponsesCreateOptions{
 		Summary: &summary,
@@ -152,7 +152,7 @@ func TestResponsesCreateCommand_WithReasoningSummary(t *testing.T) {
 	}
 
 	registry := &mockRegistry{
-		ReasoningSummaryFunc: func(s builder.Summary) builder.ResponsesOption {
+		ReasoningSummaryFunc: func(s builder.ResponsesReasoningSummary) builder.ResponsesOption {
 			receivedSummary = s
 			return nil
 		},
@@ -247,8 +247,8 @@ var (
 
 type mockRegistry struct {
 	TextInputFunc            func(text string) builder.ResponsesOption
-	ReasoningEffortFunc      func(e builder.Effort) builder.ResponsesOption
-	ReasoningSummaryFunc     func(s builder.Summary) builder.ResponsesOption
+	ReasoningEffortFunc      func(e builder.ResponsesReasoningEffort) builder.ResponsesOption
+	ReasoningSummaryFunc     func(s builder.ResponsesReasoningSummary) builder.ResponsesOption
 	WebSearchFunc            func() builder.ResponsesOption
 	WebSearchContextSizeFunc func(s builder.WebSearchContextSize) builder.ResponsesOption
 	FileInputFunc            func(name string, data []byte) builder.ResponsesOption
@@ -258,11 +258,11 @@ func (m *mockRegistry) TextInput(text string) builder.ResponsesOption {
 	return m.TextInputFunc(text)
 }
 
-func (m *mockRegistry) ReasoningEffort(e builder.Effort) builder.ResponsesOption {
+func (m *mockRegistry) ReasoningEffort(e builder.ResponsesReasoningEffort) builder.ResponsesOption {
 	return m.ReasoningEffortFunc(e)
 }
 
-func (m *mockRegistry) ReasoningSummary(s builder.Summary) builder.ResponsesOption {
+func (m *mockRegistry) ReasoningSummary(s builder.ResponsesReasoningSummary) builder.ResponsesOption {
 	return m.ReasoningSummaryFunc(s)
 }
 

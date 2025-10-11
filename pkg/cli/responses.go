@@ -16,8 +16,8 @@ type ResponsesCreateOptions struct {
 	Model                string
 	Output               string
 	Prompt               string
-	Effort               *builder.Effort
-	Summary              *builder.Summary
+	Effort               *builder.ResponsesReasoningEffort
+	Summary              *builder.ResponsesReasoningSummary
 	FileName             *string
 	FileData             []byte
 	WebSearch            bool

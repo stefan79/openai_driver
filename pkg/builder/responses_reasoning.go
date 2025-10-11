@@ -6,73 +6,73 @@ import (
 )
 
 type (
-	Effort  string
-	Summary string
+	ResponsesReasoningEffort  string
+	ResponsesReasoningSummary string
 )
 
 const (
-	MinimalEffort Effort = "minimal"
-	LowEffort     Effort = "low"
-	MediumEffort  Effort = "medium"
-	HighEffort    Effort = "high"
+	ResponsesReasoningMinimalEffort ResponsesReasoningEffort = "minimal"
+	ResponsesReasoningLowEffort     ResponsesReasoningEffort = "low"
+	ResponsesReasoningMediumEffort  ResponsesReasoningEffort = "medium"
+	ResponsesReasoningHighEffort    ResponsesReasoningEffort = "high"
 
-	AutoSummary     Summary = "auto"
-	ConciseSummary  Summary = "concise"
-	DetailedSummary Summary = "detailed"
+	ResponsesReasoningAutoSummary     ResponsesReasoningSummary = "auto"
+	ResponsesReasoningConciseSummary  ResponsesReasoningSummary = "concise"
+	ResponsesReasoningDetailedSummary ResponsesReasoningSummary = "detailed"
 )
 
-func ParseReasoningEffort(i string) (Effort, error) {
+func responsesWithReasoningEffort(e ResponsesReasoningEffort) ResponsesOption {
+	return func(r *responses.ResponsesRequest) {
+		if r.Reasoning == nil {
+			r.Reasoning = &responses.Reasoning{}
+		}
+		r.Reasoning.Effort = e.toReasoningEffort()
+	}
+}
+
+func responsesWithReasoningSummary(s ResponsesReasoningSummary) ResponsesOption {
+	return func(r *responses.ResponsesRequest) {
+		if r.Reasoning == nil {
+			r.Reasoning = &responses.Reasoning{}
+		}
+		r.Reasoning.Summary = s.toReasoningSummary()
+	}
+}
+
+func ParseReasoningEffort(i string) (ResponsesReasoningEffort, error) {
 	switch i {
 	case "minimal":
-		return MinimalEffort, nil
+		return ResponsesReasoningMinimalEffort, nil
 	case "low":
-		return LowEffort, nil
+		return ResponsesReasoningLowEffort, nil
 	case "medium":
-		return MediumEffort, nil
+		return ResponsesReasoningMediumEffort, nil
 	case "high":
-		return HighEffort, nil
+		return ResponsesReasoningHighEffort, nil
 	default:
 		return "", fmt.Errorf("invalid effort: %s", i)
 	}
 }
 
-func ParseReasoningSummary(i string) (Summary, error) {
+func ParseReasoningSummary(i string) (ResponsesReasoningSummary, error) {
 	switch i {
 	case "auto":
-		return AutoSummary, nil
+		return ResponsesReasoningAutoSummary, nil
 	case "concise":
-		return ConciseSummary, nil
+		return ResponsesReasoningConciseSummary, nil
 	case "detailed":
-		return DetailedSummary, nil
+		return ResponsesReasoningDetailedSummary, nil
 	default:
 		return "", fmt.Errorf("invalid summary: %s", i)
 	}
 }
 
-func (e Effort) ToReasoningEffort() *responses.ReasoningEffort {
+func (e ResponsesReasoningEffort) toReasoningEffort() *responses.ReasoningEffort {
 	out := responses.ReasoningEffort(e)
 	return &out
 }
 
-func (s Summary) ToReasoningSummary() *responses.ReasoningSummary {
+func (s ResponsesReasoningSummary) toReasoningSummary() *responses.ReasoningSummary {
 	out := responses.ReasoningSummary(s)
 	return &out
-}
-
-func responsesWithReasoningEffort(e Effort) ResponsesOption {
-	return func(r *responses.ResponsesRequest) {
-		if r.Reasoning == nil {
-			r.Reasoning = &responses.Reasoning{}
-		}
-		r.Reasoning.Effort = e.ToReasoningEffort()
-	}
-}
-
-func responsesWithReasoningSummary(s Summary) ResponsesOption {
-	return func(r *responses.ResponsesRequest) {
-		if r.Reasoning == nil {
-			r.Reasoning = &responses.Reasoning{}
-		}
-		r.Reasoning.Summary = s.ToReasoningSummary()
-	}
 }

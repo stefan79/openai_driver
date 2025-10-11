@@ -87,7 +87,7 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (cli.ResponsesC
 		return o, fmt.Errorf("prompt is required")
 	}
 	if cmd.Flags().Changed("web-search-context-size") {
-		webSearchContextSize, err := builder.ParseReasoningSummaryWebSearchContextSize(webSearchContextSize)
+		webSearchContextSize, err := builder.ParseWebSearchContextSize(webSearchContextSize)
 		if err != nil {
 			return o, err
 		}

@@ -10,8 +10,8 @@ type registry struct {
 type ResponseRegistry interface {
 	FileInput(name string, data []byte) ResponsesOption
 	TextInput(text string) ResponsesOption
-	ReasoningEffort(e Effort) ResponsesOption
-	ReasoningSummary(s Summary) ResponsesOption
+	ReasoningEffort(e ResponsesReasoningEffort) ResponsesOption
+	ReasoningSummary(s ResponsesReasoningSummary) ResponsesOption
 	WebSearch() ResponsesOption
 	WebSearchContextSize(s WebSearchContextSize) ResponsesOption
 }
@@ -28,11 +28,11 @@ func (r *registry) TextInput(text string) ResponsesOption {
 	return responsesWithTextInput(text)
 }
 
-func (r *registry) ReasoningEffort(e Effort) ResponsesOption {
+func (r *registry) ReasoningEffort(e ResponsesReasoningEffort) ResponsesOption {
 	return responsesWithReasoningEffort(e)
 }
 
-func (r *registry) ReasoningSummary(s Summary) ResponsesOption {
+func (r *registry) ReasoningSummary(s ResponsesReasoningSummary) ResponsesOption {
 	return responsesWithReasoningSummary(s)
 }
 
