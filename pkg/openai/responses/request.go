@@ -111,8 +111,8 @@ const (
 )
 
 type Reasoning struct {
-	Effort  *ReasoningEffort `json:"effort,omitempty"`
-	Summary *string          `json:"summary,omitempty"`
+	Effort  *ReasoningEffort  `json:"effort,omitempty"`
+	Summary *ReasoningSummary `json:"summary,omitempty"`
 }
 
 type ServiceTier string

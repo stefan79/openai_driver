@@ -19,7 +19,7 @@ type TypeFileSearchCallDef struct {
 	Results []TypeFileSearchCallResultDef `json:"results"`
 }
 
-func (t TypeFileSearchCallDef) outputType() TypeEnum {
+func (t TypeFileSearchCallDef) OutputType() TypeEnum {
 	return TypeFileSearchCall
 }
 

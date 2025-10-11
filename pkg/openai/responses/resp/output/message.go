@@ -12,20 +12,20 @@ const (
 
 // Used at /response/output[@type=message]
 type TypeMessageDef struct {
-	Type    TypeEnum                 `json:"type"`
-	Id      string                   `json:"id"`
-	Status  StatusEnum               `json:"status"`
-	Role    responses.Role           `json:"role"`
-	Content []BaseTypeMessageContent `json:"content"`
+	Type    TypeMessageContentTypeEnum `json:"type"`
+	Id      string                     `json:"id"`
+	Status  StatusEnum                 `json:"status"`
+	Role    responses.Role             `json:"role"`
+	Content []BaseTypeMessageContent   `json:"content"`
 }
 
-func (o TypeMessageDef) outputType() TypeEnum {
+func (o TypeMessageDef) OutputType() TypeEnum {
 	return TypeMessage
 }
 
 // Used at Used at /response/output[@type=message]/content
 type BaseTypeMessageContent interface {
-	contentType() TypeMessageContentTypeEnum
+	ContentType() TypeMessageContentTypeEnum
 }
 
 // Used at /response/output[@type=message]/content[@type=refusal]
@@ -34,7 +34,7 @@ type TypeMessageContentTypeRefusalDef struct {
 	Refusal string                     `json:"refusal"`
 }
 
-func (t TypeMessageContentTypeRefusalDef) contentType() TypeMessageContentTypeEnum {
+func (t TypeMessageContentTypeRefusalDef) ContentType() TypeMessageContentTypeEnum {
 	return TypeMessageContentTypeRefusal
 }
 
@@ -46,7 +46,7 @@ type TypeMessageContentTypeOutputTextDef struct {
 	LogProbs    []TypeMessageContentTypeOutputTextLogprobsDef     `json:"logprobs,omitempty"`
 }
 
-func (t TypeMessageContentTypeOutputTextDef) contentType() TypeMessageContentTypeEnum {
+func (t TypeMessageContentTypeOutputTextDef) ContentType() TypeMessageContentTypeEnum {
 	return TypeMessageContentTypeText
 }
 

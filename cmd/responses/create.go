@@ -2,11 +2,11 @@ package responses
 
 import (
 	"driver/pkg/builder/responses"
-	"driver/pkg/cli"
 	"driver/pkg/client"
 	"driver/pkg/config"
+	"driver/pkg/openai/responses/resp"
 	"fmt"
-	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -45,15 +45,19 @@ var CreateResponseCmd = &cobra.Command{
 			return
 		}
 		input := responses.WithTextInput(o.prompt)
-		resp, err := client.Create(cmd.Context(), o.model, input)
+		reasoning := responses.WithReasoning(responses.EffortMinimal, responses.SummaryNone)
+		r, err := client.Create(cmd.Context(), o.model, input, reasoning)
 		if err != nil {
 			fmt.Printf("Error creating response: %v\n", err)
 			return
 		}
-		err = cli.DumpOutput(resp, o.output, os.Stdout)
+		outputs, err := r.SelectOutput(resp.SelectMessage)
 		if err != nil {
-			fmt.Printf("Error creating response: %v\n", err)
+			fmt.Printf("Error selecting output: %v\n", err)
 			return
+		}
+		for _, output := range outputs {
+			fmt.Printf("%s\n", strings.Join(resp.SerializeText(&output), "\n"))
 		}
 	},
 }

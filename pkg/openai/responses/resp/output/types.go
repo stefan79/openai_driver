@@ -9,6 +9,7 @@ const (
 	TypeFunctionCall   TypeEnum = "function_call"
 	TypeWebSearchCall  TypeEnum = "web_search_call"
 	TypeComputerCall   TypeEnum = "computer_call"
+	TypeReasoning      TypeEnum = "reasoning"
 )
 
 // Used at /response/output/status
@@ -21,5 +22,5 @@ const (
 )
 
 type BaseType interface {
-	outputType() TypeEnum
+	OutputType() TypeEnum
 }

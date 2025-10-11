@@ -8,6 +8,10 @@ type TypeWebSearchCallDef struct {
 	Action BaseTypeWebSearchCallAction `json:"action"`
 }
 
+func (o TypeWebSearchCallDef) OutputType() TypeEnum {
+	return TypeWebSearchCall
+}
+
 // Used here /response/output[@type=web_search_call]/action/type
 type TypeWebSearchCallActionTypeEnum string
 

@@ -1,5 +1,7 @@
 package resp
 
+import "driver/pkg/openai/responses/resp/output"
+
 // TODO: Instructions can be a complex object as well: https://platform.openai.com/docs/api-reference/responses/object
 // Used at /response
 type ResponseDef struct {
@@ -15,6 +17,7 @@ type ResponseDef struct {
 	MetaData          *map[string]string    `json:"meta_data,omitempty"`
 	Model             *string               `json:"model,omitempty"`
 	Object            string                `json:"object"`
+	Output            []output.BaseType     `json:"output"`
 }
 
 // Used At /response/conversation
@@ -29,4 +32,15 @@ type ErrorDef struct {
 
 type IncompleteDetailsDef struct {
 	Reason string `json:"reason"`
+}
+
+func (r *ResponseDef) SelectOutput(selector OutputSelector) ([]output.BaseType, error) {
+	res := make([]output.BaseType, 0)
+	for _, output := range r.Output {
+		if selector.SelectOutput(output) {
+			res = append(res, output)
+		}
+
+	}
+	return res, nil
 }
