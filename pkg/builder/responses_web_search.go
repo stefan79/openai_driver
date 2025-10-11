@@ -1,4 +1,4 @@
-package responses
+package builder
 
 import (
 	"driver/pkg/openai/responses"
@@ -8,12 +8,12 @@ import (
 type WebSearchContextSize string
 
 const (
-	WebSearchEffortLow    WebSearchContextSize = "low"
-	WebSearchEffortMedium WebSearchContextSize = "medium"
-	EffortHigh            Effort               = "high"
+	WebSearchEffortLow    WebSearchContextSize     = "low"
+	WebSearchEffortMedium WebSearchContextSize     = "medium"
+	EffortHigh            ResponsesReasoningEffort = "high"
 )
 
-func WithWebSearch() ResponseOption {
+func responsesWithWebSearch() ResponsesOption {
 	return func(r *responses.ResponsesRequest) {
 		if r.Tools == nil {
 			ts := make([]responses.BaseToolType, 0)
@@ -34,7 +34,7 @@ func WithWebSearch() ResponseOption {
 	}
 }
 
-func ParseReasoningSummaryWebSearchContextSize(i string) (WebSearchContextSize, error) {
+func ParseWebSearchContextSize(i string) (WebSearchContextSize, error) {
 	switch i {
 	case "low":
 		return WebSearchEffortLow, nil
@@ -45,12 +45,7 @@ func ParseReasoningSummaryWebSearchContextSize(i string) (WebSearchContextSize, 
 	}
 }
 
-func ToWebSearchContextSize(e WebSearchContextSize) *responses.ToolTypleWebSearchSearchContextSize {
-	out := responses.ToolTypleWebSearchSearchContextSize(e)
-	return &out
-}
-
-func WithWebSearchContextSize(e WebSearchContextSize) ResponseOption {
+func responsesWithWebSearchContextSize(e WebSearchContextSize) ResponsesOption {
 	return func(r *responses.ResponsesRequest) {
 		if r.Tools == nil {
 			ts := make([]responses.BaseToolType, 0)
@@ -68,6 +63,11 @@ func WithWebSearchContextSize(e WebSearchContextSize) ResponseOption {
 			}
 			*r.Tools = append(*r.Tools, ws)
 		}
-		ws.SearchContextSize = ToWebSearchContextSize(e)
+		ws.SearchContextSize = toWebSearchContextSize(e)
 	}
+}
+
+func toWebSearchContextSize(e WebSearchContextSize) *responses.ToolTypleWebSearchSearchContextSize {
+	out := responses.ToolTypleWebSearchSearchContextSize(e)
+	return &out
 }

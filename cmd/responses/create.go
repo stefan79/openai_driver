@@ -1,13 +1,11 @@
 package responses
 
 import (
-	"driver/pkg/builder/responses"
-	"driver/pkg/client"
+	"driver/pkg/builder"
+	"driver/pkg/cli"
 	"driver/pkg/config"
-	"driver/pkg/openai/responses/resp"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -26,66 +24,23 @@ var (
 	webSearchContextSize string
 )
 
-type createOptions struct {
-	openAIAPIKey         string
-	proxy                *string
-	baseUrl              string
-	model                string
-	output               string
-	prompt               string
-	effort               *responses.Effort
-	summary              *responses.Summary
-	fileName             *string
-	fileData             []byte
-	webSearch            bool
-	webSearchContextSize *responses.WebSearchContextSize
-}
-
 var CreateResponseCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a response",
 	Long:  `Create a response`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		o, err := overlayCreateFlags(cmd, config.GetCfg(cmd))
 		if err != nil {
-			fmt.Printf("Error overlaying flags: %v\n", err)
-			return
+			return fmt.Errorf("Error overlaying flags: %v\n", err)
 		}
-		client, err := client.NewClient(o.openAIAPIKey, o.baseUrl, o.proxy)
+		client, err := cli.NewClient(o)
 		if err != nil {
-			fmt.Printf("Error creating client: %v\n", err)
-			return
+			return fmt.Errorf("Error creating client: %v\n", err)
 		}
-		options := []responses.ResponseOption{}
-		options = append(options, responses.WithTextInput(o.prompt))
-		if o.effort != nil {
-			options = append(options, responses.WithReasoningEffort(*o.effort))
+		if err := cli.ResponsesCreateCommand(cmd.Context(), client, builder.NewRegistry(), o); err != nil {
+			return fmt.Errorf("Error creating response: %v\n", err)
 		}
-		if o.summary != nil {
-			options = append(options, responses.WithReasoningSummary(*o.summary))
-		}
-		if o.fileName != nil {
-			options = append(options, responses.WithFileInput(*o.fileName, o.fileData))
-		}
-		if o.webSearch {
-			options = append(options, responses.WithWebSearch())
-		}
-		if o.webSearchContextSize != nil {
-			options = append(options, responses.WithWebSearchContextSize(*o.webSearchContextSize))
-		}
-		r, err := client.Create(cmd.Context(), o.model, options...)
-		if err != nil {
-			fmt.Printf("Error creating response: %v\n", err)
-			return
-		}
-		outputs, err := r.SelectOutput(resp.SelectMessage)
-		if err != nil {
-			fmt.Printf("Error selecting output: %v\n", err)
-			return
-		}
-		for _, output := range outputs {
-			fmt.Printf("%s\n", strings.Join(resp.SerializeText(&output), "\n"))
-		}
+		return nil
 	},
 }
 
@@ -103,66 +58,66 @@ func init() {
 	CreateResponseCmd.Flags().StringVar(&webSearchContextSize, "web-search-context-size", "", "Web Search Context Size")
 }
 
-func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions, error) {
-	o := createOptions{
-		openAIAPIKey: base.OpenAI.APIKey,
-		proxy:        base.HttpConfig.Proxy,
-		baseUrl:      base.OpenAI.BaseUrl,
-		model:        base.OpenAI.Model,
-		output:       base.Console.Output,
+func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (cli.ResponsesCreateOptions, error) {
+	o := cli.ResponsesCreateOptions{
+		OpenAIAPIKey: base.OpenAI.APIKey,
+		Proxy:        base.HttpConfig.Proxy,
+		BaseUrl:      base.OpenAI.BaseUrl,
+		Model:        base.OpenAI.Model,
+		Output:       base.Console.Output,
 	}
 	if cmd.Flags().Changed("openai-api-key") {
-		o.openAIAPIKey = openAIAPIKey
+		o.OpenAIAPIKey = openAIAPIKey
 	}
 	if cmd.Flags().Changed("proxy") {
-		o.proxy = &proxy
+		o.Proxy = &proxy
 	}
 	if cmd.Flags().Changed("model") {
-		o.model = model
+		o.Model = model
 	}
 	if cmd.Flags().Changed("base-url") {
-		o.baseUrl = baseUrl
+		o.BaseUrl = baseUrl
 	}
 	if cmd.Flags().Changed("output") {
-		o.output = output
+		o.Output = output
 	}
 	if cmd.Flags().Changed("prompt") {
-		o.prompt = prompt
+		o.Prompt = prompt
 	} else {
 		return o, fmt.Errorf("prompt is required")
 	}
 	if cmd.Flags().Changed("web-search-context-size") {
-		webSearchContextSize, err := responses.ParseReasoningSummaryWebSearchContextSize(webSearchContextSize)
+		webSearchContextSize, err := builder.ParseWebSearchContextSize(webSearchContextSize)
 		if err != nil {
 			return o, err
 		}
-		o.webSearchContextSize = &webSearchContextSize
+		o.WebSearchContextSize = &webSearchContextSize
 	}
 
 	if cmd.Flags().Changed("effort") {
-		effort, err := responses.ParseReasoningEffort(effort)
+		effort, err := builder.ParseReasoningEffort(effort)
 		if err != nil {
 			return o, err
 		}
-		o.effort = &effort
+		o.Effort = &effort
 	}
 	if cmd.Flags().Changed("summary") {
-		summary, err := responses.ParseReasoningSummary(summary)
+		summary, err := builder.ParseReasoningSummary(summary)
 		if err != nil {
 			return o, err
 		}
-		o.summary = &summary
+		o.Summary = &summary
 	}
 	if cmd.Flags().Changed("file") {
 		data, err := os.ReadFile(file)
 		if err != nil {
 			return o, err
 		}
-		o.fileName = &file
-		o.fileData = data
+		o.FileName = &file
+		o.FileData = data
 	}
 	if cmd.Flags().Changed("web-search") {
-		o.webSearch = true
+		o.WebSearch = true
 	}
 
 	return o, nil
