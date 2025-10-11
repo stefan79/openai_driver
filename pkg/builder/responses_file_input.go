@@ -1,4 +1,4 @@
-package responses
+package builder
 
 import (
 	"driver/pkg/openai"
@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func WithFileInput(name string, data []byte) ResponseOption {
+func responsesWithFileInput(name string, data []byte) ResponsesOption {
 
 	return func(r *responses.ResponsesRequest) {
 		mimeType := mime.TypeByExtension(filepath.Ext(name))

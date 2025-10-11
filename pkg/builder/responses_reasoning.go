@@ -1,4 +1,4 @@
-package responses
+package builder
 
 import (
 	"driver/pkg/openai/responses"
@@ -59,7 +59,7 @@ func (s Summary) ToReasoningSummary() *responses.ReasoningSummary {
 	return &out
 }
 
-func WithReasoningEffort(e Effort) ResponseOption {
+func responsesWithReasoningEffort(e Effort) ResponsesOption {
 	return func(r *responses.ResponsesRequest) {
 		if r.Reasoning == nil {
 			r.Reasoning = &responses.Reasoning{}
@@ -68,7 +68,7 @@ func WithReasoningEffort(e Effort) ResponseOption {
 	}
 }
 
-func WithReasoningSummary(s Summary) ResponseOption {
+func responsesWithReasoningSummary(s Summary) ResponsesOption {
 	return func(r *responses.ResponsesRequest) {
 		if r.Reasoning == nil {
 			r.Reasoning = &responses.Reasoning{}

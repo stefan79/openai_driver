@@ -1,4 +1,4 @@
-package responses
+package builder
 
 import (
 	"driver/pkg/openai/responses"
@@ -13,7 +13,7 @@ const (
 	EffortHigh            Effort               = "high"
 )
 
-func WithWebSearch() ResponseOption {
+func responsesWithWebSearch() ResponsesOption {
 	return func(r *responses.ResponsesRequest) {
 		if r.Tools == nil {
 			ts := make([]responses.BaseToolType, 0)
@@ -50,7 +50,7 @@ func ToWebSearchContextSize(e WebSearchContextSize) *responses.ToolTypleWebSearc
 	return &out
 }
 
-func WithWebSearchContextSize(e WebSearchContextSize) ResponseOption {
+func responsesWithWebSearchContextSize(e WebSearchContextSize) ResponsesOption {
 	return func(r *responses.ResponsesRequest) {
 		if r.Tools == nil {
 			ts := make([]responses.BaseToolType, 0)

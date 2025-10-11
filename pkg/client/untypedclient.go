@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	builderResp "driver/pkg/builder/responses"
+	"driver/pkg/builder"
 	"driver/pkg/net"
 	openAIResp "driver/pkg/openai/responses"
 	"driver/pkg/openai/responses/resp"
@@ -24,7 +24,7 @@ func NewClient(openApiKey string, baseUrl string, proxy *string) (Client, error)
 	}, nil
 }
 
-func (c *defaultClient) Create(ctx context.Context, model string, options ...builderResp.ResponseOption) (*resp.ResponseDef, error) {
+func (c *defaultClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error) {
 	//Add a mapper function which creates the openAI Request from the ResponseRequest
 
 	responsesRequest := openAIResp.ResponsesRequest{
@@ -58,7 +58,7 @@ func (c *defaultClient) Create(ctx context.Context, model string, options ...bui
 	return response, nil
 }
 
-func (c *defaultClient) CreateStream(ctx context.Context, model string, options ...builderResp.ResponseOption) (*StreamReader, error) {
+func (c *defaultClient) CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (*StreamReader, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
