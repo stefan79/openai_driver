@@ -1,5 +1,7 @@
 package responses
 
+import "driver/pkg/openai"
+
 type Includes string
 
 type InputContentType string
@@ -25,11 +27,11 @@ func (t TextInputContent) contentType() InputContentType { return InputContentTy
 
 // FileContent represents file input
 type FileInputContent struct {
-	Type     InputContentType `json:"type"`
-	FileData *[]byte          `json:"file_data"`
-	FileId   *string          `json:"file_id"`
-	FileUrl  *string          `json:"file_url"`
-	FileName *string          `json:"filename"`
+	Type     InputContentType    `json:"type"`
+	FileData *openai.Base64Bytes `json:"file_data,omitempty"`
+	FileId   *string             `json:"file_id,omitempty"`
+	FileUrl  *string             `json:"file_url,omitempty"`
+	FileName *string             `json:"filename,omitempty"`
 }
 
 func (t FileInputContent) contentType() InputContentType { return InputContentTypeFile }
@@ -46,8 +48,8 @@ const (
 type ImageInputContent struct {
 	Type        InputContentType `json:"type"`
 	ImageDetail ImageDetail      `json:"detail"`
-	FileId      *string          `json:"file_id"`
-	ImageUrl    *string          `json:"image_url"`
+	FileId      *string          `json:"file_id,omitempty"`
+	ImageUrl    *string          `json:"image_url,omitempty"`
 }
 
 func (t ImageInputContent) contentType() InputContentType { return InputContentTypeImage }

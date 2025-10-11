@@ -6,6 +6,7 @@ import (
 	"driver/pkg/config"
 	"driver/pkg/openai/responses/resp"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -20,6 +21,7 @@ var (
 	prompt       string
 	effort       string
 	summary      string
+	file         string
 )
 
 type createOptions struct {
@@ -31,6 +33,8 @@ type createOptions struct {
 	prompt       string
 	effort       *responses.Effort
 	summary      *responses.Summary
+	fileName     *string
+	fileData     []byte
 }
 
 var CreateResponseCmd = &cobra.Command{
@@ -55,6 +59,9 @@ var CreateResponseCmd = &cobra.Command{
 		}
 		if o.summary != nil {
 			options = append(options, responses.WithReasoningSummary(*o.summary))
+		}
+		if o.fileName != nil {
+			options = append(options, responses.WithFileInput(*o.fileName, o.fileData))
 		}
 		r, err := client.Create(cmd.Context(), o.model, options...)
 		if err != nil {
@@ -81,6 +88,8 @@ func init() {
 	CreateResponseCmd.Flags().StringVar(&prompt, "prompt", "", "Prompt")
 	CreateResponseCmd.Flags().StringVar(&effort, "effort", "", "Effort")
 	CreateResponseCmd.Flags().StringVar(&summary, "summary", "", "Summary")
+	CreateResponseCmd.Flags().StringVar(&file, "file", "", "File Name")
+
 }
 
 func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions, error) {
@@ -125,6 +134,14 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (createOptions,
 			return o, err
 		}
 		o.summary = &summary
+	}
+	if cmd.Flags().Changed("file") {
+		data, err := os.ReadFile(file)
+		if err != nil {
+			return o, err
+		}
+		o.fileName = &file
+		o.fileData = data
 	}
 
 	return o, nil
