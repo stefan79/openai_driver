@@ -27,7 +27,7 @@ func TestResponsesTextInput(t *testing.T) {
 		t.Errorf("Expected type to be text, got %s", req.Input[0].Content[0].ContentType())
 	}
 
-	c := req.Input[0].Content[0].(request.TextInputContent)
+	c := req.Input[0].Content[0].(request.InputContentTypeTextDef)
 
 	if c.Text != "test" {
 		t.Errorf("Expected text to be test, got %s", c.Text)

@@ -5,7 +5,7 @@ type RequestDef struct {
 	Background         *bool              `json:"background,omitempty"`
 	ConversationId     *string            `json:"conversation,omitempty"`
 	Includes           *[]Includes        `json:"includes,omitempty"`
-	Input              []Input            `json:"input"`
+	Input              []InputDef         `json:"input"`
 	Instructions       *string            `json:"instructions,omitempty"`
 	MaxOutputTokens    *int               `json:"max_output_tokens,omitempty"`
 	MaxToolCalls       *int               `json:"max_tool_calls,omitempty"`

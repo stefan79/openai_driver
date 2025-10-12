@@ -8,14 +8,14 @@ import (
 func responsesWithTextInput(text string) ResponsesOption {
 	return func(r *request.RequestDef) {
 		if r.Input == nil {
-			r.Input = make([]request.Input, 0)
+			r.Input = make([]request.InputDef, 0)
 		}
-		r.Input = append(r.Input, request.Input{
+		r.Input = append(r.Input, request.InputDef{
 			Role: openai.RoleUser,
-			Content: []request.InputContent{
-				request.TextInputContent{
+			Content: []request.BaseInputContent{
+				request.InputContentTypeTextDef{
 					Text: text,
-					Type: request.InputContentTypeText,
+					Type: request.InputContentTypeImage,
 				},
 			},
 		})

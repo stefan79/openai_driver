@@ -13,12 +13,12 @@ func responsesWithFileInput(name string, data []byte) ResponsesOption {
 	return func(r *request.RequestDef) {
 		mimeType := mime.TypeByExtension(filepath.Ext(name))
 		if r.Input == nil {
-			r.Input = []request.Input{}
+			r.Input = []request.InputDef{}
 		}
-		r.Input = append(r.Input, request.Input{
+		r.Input = append(r.Input, request.InputDef{
 			Role: openai.RoleUser,
-			Content: []request.InputContent{
-				request.FileInputContent{
+			Content: []request.BaseInputContent{
+				request.InputContentTypeFileDef{
 					FileName: &name,
 					FileData: openai.NewBase64Bytes(data, mimeType),
 					Type:     request.InputContentTypeFile,

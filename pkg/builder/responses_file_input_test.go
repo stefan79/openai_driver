@@ -27,7 +27,7 @@ func TestResponsesFileInput_Default(t *testing.T) {
 		t.Errorf("Expected type to be file, got %s", req.Input[0].Content[0].ContentType())
 	}
 
-	f := req.Input[0].Content[0].(request.FileInputContent)
+	f := req.Input[0].Content[0].(request.InputContentTypeFileDef)
 
 	if f.FileName == nil {
 		t.Errorf("Expected file name to be set")

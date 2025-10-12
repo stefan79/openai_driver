@@ -1,78 +1,6 @@
 package request
 
-import "github.com/stefan79/openai-driver/pkg/openai"
-
 type Includes string
-
-type InputContentType string
-
-const (
-	InputContentTypeText  InputContentType = "input_text"
-	InputContentTypeFile  InputContentType = "input_file"
-	InputContentTypeImage InputContentType = "input_image"
-	InputContentTypeAudio InputContentType = "input_audio"
-)
-
-type InputContent interface {
-	ContentType() InputContentType
-}
-
-// TextContent represents text input
-type TextInputContent struct {
-	Type InputContentType `json:"type"`
-	Text string           `json:"text"`
-}
-
-func (t TextInputContent) ContentType() InputContentType { return InputContentTypeText }
-
-// FileContent represents file input
-type FileInputContent struct {
-	Type     InputContentType    `json:"type"`
-	FileData *openai.Base64Bytes `json:"file_data,omitempty"`
-	FileId   *string             `json:"file_id,omitempty"`
-	FileUrl  *string             `json:"file_url,omitempty"`
-	FileName *string             `json:"filename,omitempty"`
-}
-
-func (t FileInputContent) ContentType() InputContentType { return InputContentTypeFile }
-
-type ImageDetail string
-
-const (
-	ImageDetailAuto ImageDetail = "auto"
-	ImageDetailHigh ImageDetail = "high"
-	ImageDetailLow  ImageDetail = "low"
-)
-
-// ImageContent represents image input
-type ImageInputContent struct {
-	Type        InputContentType `json:"type"`
-	ImageDetail ImageDetail      `json:"detail"`
-	FileId      *string          `json:"file_id,omitempty"`
-	ImageUrl    *string          `json:"image_url,omitempty"`
-}
-
-func (t ImageInputContent) ContentType() InputContentType { return InputContentTypeImage }
-
-type AudioFormat string
-
-const (
-	AudioFormatMP3 AudioFormat = "mp3"
-	AudioFormatWAV AudioFormat = "wav"
-)
-
-type AudioInput struct {
-	Data   []byte      `json:"data"`
-	Format AudioFormat `json:"format"`
-}
-
-// AudioContent represents audio input
-type AudioInputContent struct {
-	Type       InputContentType `json:"type"`
-	AudioInput AudioInput       `json:"audio_input"`
-}
-
-func (t AudioInputContent) ContentType() InputContentType { return InputContentTypeAudio }
 
 const (
 	WebSearchSources            Includes = "web_search_call.action.sources"
@@ -83,11 +11,6 @@ const (
 	MessageOutputTextLogprobs   Includes = "message.output_text.logprobs"
 	ReasoningEncryptedContent   Includes = "reasoning.encrypted_content"
 )
-
-type Input struct {
-	Role    openai.Role    `json:"role"`
-	Content []InputContent `json:"content"`
-}
 
 type Prompt struct {
 	Id        string             `json:"id"`
@@ -190,7 +113,7 @@ type ResponsesRequest struct {
 	Background         *bool              `json:"background,omitempty"`
 	ConversationId     *string            `json:"conversation,omitempty"`
 	Includes           *[]Includes        `json:"includes,omitempty"`
-	Input              []Input            `json:"input"`
+	Input              []InputDef         `json:"input"`
 	Instructions       *string            `json:"instructions,omitempty"`
 	MaxOutputTokens    *int               `json:"max_output_tokens,omitempty"`
 	MaxToolCalls       *int               `json:"max_tool_calls,omitempty"`
