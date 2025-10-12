@@ -16,7 +16,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.25.1'  # Match your go.mod version
+        go-version: '1.23'  # Match your go.mod version
 
     - name: Download dependencies
       run: go mod download
