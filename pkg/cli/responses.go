@@ -7,7 +7,7 @@ import (
 
 	"github.com/stefan79/openai-driver/pkg/builder"
 	"github.com/stefan79/openai-driver/pkg/client"
-	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
 )
 
 type ResponsesCreateOptions struct {
@@ -53,12 +53,12 @@ func ResponsesCreateCommand(ctx context.Context, client client.Client, registry 
 	if err != nil {
 		return fmt.Errorf("Error creating response: %v\n", err)
 	}
-	outputs, err := r.SelectOutput(resp.SelectMessage)
+	outputs, err := r.SelectOutput(response.SelectMessage)
 	if err != nil {
 		return fmt.Errorf("Error selecting output: %v\n", err)
 	}
 	for _, output := range outputs {
-		fmt.Printf("%s\n", strings.Join(resp.SerializeText(&output), "\n"))
+		fmt.Printf("%s\n", strings.Join(response.SerializeText(&output), "\n"))
 	}
 	return nil
 }

@@ -1,6 +1,6 @@
 package output
 
-import "github.com/stefan79/openai-driver/pkg/openai/responses"
+import "github.com/stefan79/openai-driver/pkg/openai"
 
 // Used at /response/output[@type=message]/content/type
 type TypeMessageContentTypeEnum string
@@ -15,7 +15,7 @@ type TypeMessageDef struct {
 	Type    TypeMessageContentTypeEnum `json:"type"`
 	Id      string                     `json:"id"`
 	Status  StatusEnum                 `json:"status"`
-	Role    responses.Role             `json:"role"`
+	Role    openai.Role                `json:"role"`
 	Content []BaseTypeMessageContent   `json:"content"`
 }
 

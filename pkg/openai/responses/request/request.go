@@ -1,4 +1,4 @@
-package responses
+package request
 
 import "github.com/stefan79/openai-driver/pkg/openai"
 
@@ -85,7 +85,7 @@ const (
 )
 
 type Input struct {
-	Role    Role           `json:"role"`
+	Role    openai.Role    `json:"role"`
 	Content []InputContent `json:"content"`
 }
 

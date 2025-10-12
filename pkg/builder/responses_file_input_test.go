@@ -3,18 +3,19 @@ package builder
 import (
 	"testing"
 
-	"github.com/stefan79/openai-driver/pkg/openai/responses"
+	"github.com/stefan79/openai-driver/pkg/openai"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/request"
 )
 
 func TestResponsesFileInput_Default(t *testing.T) {
-	req := &responses.ResponsesRequest{}
+	req := &request.RequestDef{}
 	responsesWithFileInput("test.txt", []byte("test"))(req)
 
 	if len(req.Input) != 1 {
 		t.Errorf("Expected 1 input, got %d", len(req.Input))
 	}
 
-	if req.Input[0].Role != responses.RoleUser {
+	if req.Input[0].Role != openai.RoleUser {
 		t.Errorf("Expected role to be user, got %s", req.Input[0].Role)
 	}
 
@@ -22,11 +23,11 @@ func TestResponsesFileInput_Default(t *testing.T) {
 		t.Errorf("Expected 1 content, got %d", len(req.Input[0].Content))
 	}
 
-	if req.Input[0].Content[0].ContentType() != responses.InputContentTypeFile {
+	if req.Input[0].Content[0].ContentType() != request.InputContentTypeFile {
 		t.Errorf("Expected type to be file, got %s", req.Input[0].Content[0].ContentType())
 	}
 
-	f := req.Input[0].Content[0].(responses.FileInputContent)
+	f := req.Input[0].Content[0].(request.FileInputContent)
 
 	if f.FileName == nil {
 		t.Errorf("Expected file name to be set")

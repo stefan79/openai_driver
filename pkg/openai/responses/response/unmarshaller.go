@@ -1,9 +1,9 @@
-package resp
+package response
 
 import (
 	"encoding/json"
 
-	"github.com/stefan79/openai-driver/pkg/openai/responses/resp/output"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/response/output"
 	"github.com/stefan79/openai-driver/pkg/util"
 )
 

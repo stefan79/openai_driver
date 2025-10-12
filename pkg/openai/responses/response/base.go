@@ -1,6 +1,6 @@
-package resp
+package response
 
-import "github.com/stefan79/openai-driver/pkg/openai/responses/resp/output"
+import "github.com/stefan79/openai-driver/pkg/openai/responses/response/output"
 
 // TODO: Instructions can be a complex object as well: https://platform.openai.com/docs/api-reference/responses/object
 // Used at /response

@@ -1,8 +1,8 @@
 package builder
 
-import "github.com/stefan79/openai-driver/pkg/openai/responses"
+import "github.com/stefan79/openai-driver/pkg/openai/responses/request"
 
-type ResponsesOption func(*responses.ResponsesRequest)
+type ResponsesOption func(*request.RequestDef)
 
 type registry struct {
 }

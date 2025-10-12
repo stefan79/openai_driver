@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
 
-	openAIResp "github.com/stefan79/openai-driver/pkg/openai/responses"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/request"
 
 	"github.com/stefan79/openai-driver/pkg/builder"
 	"github.com/stefan79/openai-driver/pkg/net"
@@ -27,10 +27,10 @@ func NewClient(openApiKey, baseUrl string, proxy *string) (Client, error) {
 	}, nil
 }
 
-func (c *defaultClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error) {
+func (c *defaultClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*response.ResponseDef, error) {
 	// Add a mapper function which creates the openAI Request from the ResponseRequest
 
-	responsesRequest := openAIResp.ResponsesRequest{
+	responsesRequest := request.RequestDef{
 		Model: &model,
 	}
 	for _, option := range options {
@@ -51,7 +51,7 @@ func (c *defaultClient) Create(ctx context.Context, model string, options ...bui
 		return nil, err
 	}
 
-	response := &resp.ResponseDef{}
+	response := &response.ResponseDef{}
 	err = json.Unmarshal(httpResponse.Body, response)
 	if err != nil {
 		fmt.Printf("Unmarshalling error: %e\n", err)
@@ -65,7 +65,7 @@ func (c *defaultClient) CreateStream(ctx context.Context, model string, options 
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (c *defaultClient) Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error) {
+func (c *defaultClient) Retrieve(ctx context.Context, responseId string) (*response.ResponseDef, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 

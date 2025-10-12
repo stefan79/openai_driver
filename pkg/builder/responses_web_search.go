@@ -3,7 +3,7 @@ package builder
 import (
 	"fmt"
 
-	"github.com/stefan79/openai-driver/pkg/openai/responses"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/request"
 )
 
 type WebSearchContextSize string
@@ -15,20 +15,20 @@ const (
 )
 
 func responsesWithWebSearch() ResponsesOption {
-	return func(r *responses.ResponsesRequest) {
+	return func(r *request.RequestDef) {
 		if r.Tools == nil {
-			ts := make([]responses.BaseToolType, 0)
+			ts := make([]request.BaseToolType, 0)
 			r.Tools = &ts
 		}
-		var ws *responses.ToolTypeWebSearchDef
+		var ws *request.ToolTypeWebSearchDef
 		for _, t := range *r.Tools {
-			if t.ToolType() == responses.ToolTypeWebSearch {
-				ws = t.(*responses.ToolTypeWebSearchDef)
+			if t.ToolType() == request.ToolTypeWebSearch {
+				ws = t.(*request.ToolTypeWebSearchDef)
 			}
 		}
 		if ws == nil {
-			ws = &responses.ToolTypeWebSearchDef{
-				Type: responses.ToolTypeWebSearch,
+			ws = &request.ToolTypeWebSearchDef{
+				Type: request.ToolTypeWebSearch,
 			}
 			*r.Tools = append(*r.Tools, ws)
 		}
@@ -47,20 +47,20 @@ func ParseWebSearchContextSize(i string) (WebSearchContextSize, error) {
 }
 
 func responsesWithWebSearchContextSize(e WebSearchContextSize) ResponsesOption {
-	return func(r *responses.ResponsesRequest) {
+	return func(r *request.RequestDef) {
 		if r.Tools == nil {
-			ts := make([]responses.BaseToolType, 0)
+			ts := make([]request.BaseToolType, 0)
 			r.Tools = &ts
 		}
-		var ws *responses.ToolTypeWebSearchDef
+		var ws *request.ToolTypeWebSearchDef
 		for _, t := range *r.Tools {
-			if t.ToolType() == responses.ToolTypeWebSearch {
-				ws = t.(*responses.ToolTypeWebSearchDef)
+			if t.ToolType() == request.ToolTypeWebSearch {
+				ws = t.(*request.ToolTypeWebSearchDef)
 			}
 		}
 		if ws == nil {
-			ws = &responses.ToolTypeWebSearchDef{
-				Type: responses.ToolTypeWebSearch,
+			ws = &request.ToolTypeWebSearchDef{
+				Type: request.ToolTypeWebSearch,
 			}
 			*r.Tools = append(*r.Tools, ws)
 		}
@@ -68,7 +68,7 @@ func responsesWithWebSearchContextSize(e WebSearchContextSize) ResponsesOption {
 	}
 }
 
-func toWebSearchContextSize(e WebSearchContextSize) *responses.ToolTypleWebSearchSearchContextSize {
-	out := responses.ToolTypleWebSearchSearchContextSize(e)
+func toWebSearchContextSize(e WebSearchContextSize) *request.ToolTypleWebSearchSearchContextSize {
+	out := request.ToolTypleWebSearchSearchContextSize(e)
 	return &out
 }
