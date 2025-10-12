@@ -68,7 +68,7 @@ func responsesWithWebSearchContextSize(e WebSearchContextSize) ResponsesOption {
 	}
 }
 
-func toWebSearchContextSize(e WebSearchContextSize) *request.ToolTypleWebSearchSearchContextSize {
-	out := request.ToolTypleWebSearchSearchContextSize(e)
+func toWebSearchContextSize(e WebSearchContextSize) *request.ToolTypleWebSearchSearchContextSizeEnum {
+	out := request.ToolTypleWebSearchSearchContextSizeEnum(e)
 	return &out
 }

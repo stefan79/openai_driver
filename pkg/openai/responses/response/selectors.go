@@ -1,50 +1,48 @@
 package response
 
-import "github.com/stefan79/openai-driver/pkg/openai/responses/response/output"
-
 type OutputSelector interface {
-	SelectOutput(output.BaseType) bool
+	SelectOutput(OutputBaseType) bool
 }
 
 // OutputSelectorFunc is a function type that implements OutputSelector
-type OutputSelectorFunc func(output.BaseType) bool
+type OutputSelectorFunc func(OutputBaseType) bool
 
 // SelectOutput implements the OutputSelector interface
-func (f OutputSelectorFunc) SelectOutput(o output.BaseType) bool {
+func (f OutputSelectorFunc) SelectOutput(o OutputBaseType) bool {
 	return f(o)
 }
 
 // Predefined selectors
 var (
-	SelectMessage OutputSelectorFunc = func(o output.BaseType) bool {
-		return o.OutputType() == output.TypeMessage
+	SelectMessage OutputSelectorFunc = func(o OutputBaseType) bool {
+		return o.OutputType() == OutputTypeMessage
 	}
 
-	SelectFileSearchCall OutputSelectorFunc = func(o output.BaseType) bool {
-		return o.OutputType() == output.TypeFileSearchCall
+	SelectFileSearchCall OutputSelectorFunc = func(o OutputBaseType) bool {
+		return o.OutputType() == OutputTypeFileSearchCall
 	}
 
-	SelectWebSearchCall OutputSelectorFunc = func(o output.BaseType) bool {
-		return o.OutputType() == output.TypeWebSearchCall
+	SelectWebSearchCall OutputSelectorFunc = func(o OutputBaseType) bool {
+		return o.OutputType() == OutputTypeWebSearchCall
 	}
 
-	SelectFunctionCall OutputSelectorFunc = func(o output.BaseType) bool {
-		return o.OutputType() == output.TypeFunctionCall
+	SelectFunctionCall OutputSelectorFunc = func(o OutputBaseType) bool {
+		return o.OutputType() == OutputTypeFunctionCall
 	}
 
-	SelectComputerCall OutputSelectorFunc = func(o output.BaseType) bool {
-		return o.OutputType() == output.TypeComputerCall
+	SelectComputerCall OutputSelectorFunc = func(o OutputBaseType) bool {
+		return o.OutputType() == OutputTypeComputerCall
 	}
 )
 
 // Helper functions to create custom selectors
 
 // ByStatus creates a selector that filters by status (works for types that have Status field)
-func ByStatus(status output.StatusEnum) OutputSelectorFunc {
-	return func(o output.BaseType) bool {
+func ByStatus(status OutputStatusEnum) OutputSelectorFunc {
+	return func(o OutputBaseType) bool {
 		// Type assertion to check if output has Status field
 		type hasStatus interface {
-			GetStatus() output.StatusEnum
+			GetStatus() OutputStatusEnum
 		}
 		if s, ok := o.(hasStatus); ok {
 			return s.GetStatus() == status
@@ -55,7 +53,7 @@ func ByStatus(status output.StatusEnum) OutputSelectorFunc {
 
 // And combines multiple selectors with AND logic
 func And(selectors ...OutputSelector) OutputSelectorFunc {
-	return func(o output.BaseType) bool {
+	return func(o OutputBaseType) bool {
 		for _, sel := range selectors {
 			if !sel.SelectOutput(o) {
 				return false
@@ -67,7 +65,7 @@ func And(selectors ...OutputSelector) OutputSelectorFunc {
 
 // Or combines multiple selectors with OR logic
 func Or(selectors ...OutputSelector) OutputSelectorFunc {
-	return func(o output.BaseType) bool {
+	return func(o OutputBaseType) bool {
 		for _, sel := range selectors {
 			if sel.SelectOutput(o) {
 				return true
@@ -79,7 +77,7 @@ func Or(selectors ...OutputSelector) OutputSelectorFunc {
 
 // Not negates a selector
 func Not(selector OutputSelector) OutputSelectorFunc {
-	return func(o output.BaseType) bool {
+	return func(o OutputBaseType) bool {
 		return !selector.SelectOutput(o)
 	}
 }

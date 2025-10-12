@@ -1,34 +1,30 @@
 package response
 
-import (
-	"github.com/stefan79/openai-driver/pkg/openai/responses/response/output"
-)
-
 type OutputSerializer interface {
-	SelectOutput(*output.BaseType) []string
+	SelectOutput(*OutputBaseType) []string
 }
 
 // OutputSerializerFunc is a function type that implements OutputSerializer
-type OutputSerializerFunc func(*output.BaseType) []string
+type OutputSerializerFunc func(*OutputBaseType) []string
 
 // SelectOutput implements the OutputSelector interface
-func (f OutputSerializerFunc) SelectOutput(o output.BaseType) []string {
+func (f OutputSerializerFunc) SelectOutput(o OutputBaseType) []string {
 	return f(&o)
 }
 
 // Predefined selectors
 var (
-	SerializeText OutputSerializerFunc = func(o *output.BaseType) []string {
-		if o == nil || (*o).OutputType() != output.TypeMessage {
+	SerializeText OutputSerializerFunc = func(o *OutputBaseType) []string {
+		if o == nil || (*o).OutputType() != OutputTypeMessage {
 			return nil
 		}
-		msg := (*o).(*output.TypeMessageDef)
+		msg := (*o).(*OutputTypeMessageDef)
 		res := make([]string, 0)
 		for _, content := range msg.Content {
 			switch v := content.(type) {
-			case *output.TypeMessageContentTypeOutputTextDef:
+			case *OutputTypeMessageContentTypeOutputTextDef:
 				res = append(res, v.Text)
-			case *output.TypeMessageContentTypeRefusalDef:
+			case *OutputTypeMessageContentTypeRefusalDef:
 				res = append(res, v.Refusal)
 			}
 		}

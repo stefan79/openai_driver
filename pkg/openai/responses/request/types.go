@@ -4,7 +4,7 @@ package request
 type RequestDef struct {
 	Background         *bool              `json:"background,omitempty"`
 	ConversationId     *string            `json:"conversation,omitempty"`
-	Includes           *[]Includes        `json:"includes,omitempty"`
+	Includes           *[]IncludesEnum    `json:"includes,omitempty"`
 	Input              []InputDef         `json:"input"`
 	Instructions       *string            `json:"instructions,omitempty"`
 	MaxOutputTokens    *int               `json:"max_output_tokens,omitempty"`
@@ -28,3 +28,15 @@ type RequestDef struct {
 	Truncation         *Truncaction       `json:"truncation,omitempty"`
 	Tools              *[]BaseToolType    `json:"tools,omitempty"`
 }
+
+type IncludesEnum string
+
+const (
+	IncludesWebSearchSources            IncludesEnum = "web_search_call.action.sources"
+	IncludesCodeInterpreterCallOutputs  IncludesEnum = "code_interpreter_call.outputs"
+	IncludesComputerCallOutputImageUrls IncludesEnum = "computer_call_output.output.image_url"
+	IncludesFileSearchCallResults       IncludesEnum = "file_search_call.results"
+	IncludesMessageInputImageImageUrls  IncludesEnum = "message.input_image.image_url"
+	IncludesMessageOutputTextLogprobs   IncludesEnum = "message.output_text.logprobs"
+	IncludesReasoningEncryptedContent   IncludesEnum = "reasoning.encrypted_content"
+)
