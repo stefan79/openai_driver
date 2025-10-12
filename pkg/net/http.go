@@ -16,7 +16,7 @@ type defaultHTTPClient struct {
 	baseUrl string
 }
 
-func NewHTTPClient(openApiKey string, baseUrl string, proxy *string) (HTTPClient, error) {
+func NewHTTPClient(openApiKey, baseUrl string, proxy *string) (HTTPClient, error) {
 	client := defaultHTTPClient{
 		client:  &http.Client{},
 		apiKey:  openApiKey,
@@ -73,7 +73,7 @@ func (c *defaultHTTPClient) Do(ctx context.Context, req *OpenAIRequest) (*OpenAI
 	}, nil
 }
 
-func mapOpenAIToHttp(req *OpenAIRequest, baseUrl string, apiKey string) (*http.Request, error) {
+func mapOpenAIToHttp(req *OpenAIRequest, baseUrl, apiKey string) (*http.Request, error) {
 	httpReq, err := http.NewRequest(req.Method, baseUrl+req.Path, bytes.NewReader(req.Body))
 	if err != nil {
 		return nil, err

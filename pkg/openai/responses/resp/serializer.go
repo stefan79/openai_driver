@@ -12,8 +12,8 @@ type OutputSerializer interface {
 type OutputSerializerFunc func(*output.BaseType) []string
 
 // SelectOutput implements the OutputSelector interface
-func (f OutputSerializerFunc) SelectOutput(o *output.BaseType) []string {
-	return f(o)
+func (f OutputSerializerFunc) SelectOutput(o output.BaseType) []string {
+	return f(&o)
 }
 
 // Predefined selectors

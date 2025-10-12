@@ -19,7 +19,7 @@ type TypeMessageDef struct {
 	Content []BaseTypeMessageContent   `json:"content"`
 }
 
-func (o TypeMessageDef) OutputType() TypeEnum {
+func (o *TypeMessageDef) OutputType() TypeEnum {
 	return TypeMessage
 }
 
@@ -34,7 +34,7 @@ type TypeMessageContentTypeRefusalDef struct {
 	Refusal string                     `json:"refusal"`
 }
 
-func (t TypeMessageContentTypeRefusalDef) ContentType() TypeMessageContentTypeEnum {
+func (t *TypeMessageContentTypeRefusalDef) ContentType() TypeMessageContentTypeEnum {
 	return TypeMessageContentTypeRefusal
 }
 
@@ -46,7 +46,7 @@ type TypeMessageContentTypeOutputTextDef struct {
 	LogProbs    []TypeMessageContentTypeOutputTextLogprobsDef     `json:"logprobs,omitempty"`
 }
 
-func (t TypeMessageContentTypeOutputTextDef) ContentType() TypeMessageContentTypeEnum {
+func (t *TypeMessageContentTypeOutputTextDef) ContentType() TypeMessageContentTypeEnum {
 	return TypeMessageContentTypeText
 }
 
@@ -100,7 +100,7 @@ type OutputContentMessageTextAnnotationContainerFilerCitation struct {
 	FileName    string                                              `json:"filename"`
 }
 
-func (t OutputContentMessageTextAnnotationContainerFilerCitation) AnnotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
+func (t *OutputContentMessageTextAnnotationContainerFilerCitation) AnnotationType() TypeMessageContentTypeOutputTextAnnotationsTypeEnum {
 	return TypeMessageContentTypeOutputTextAnnotationsTypeContainerFileCitation
 }
 

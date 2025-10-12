@@ -15,20 +15,36 @@ linters-settings:
   gocritic:
     settings:
       captLocal: 
-        onlyMyFuncs: false
+        paramsOnly: false
     enabled-tags:
       - performance
       - style
       - experimental
       - opinionated
 
-run:
-  skip-files:
-    - "**/*_test.go"
-    - "**/testdata/**"
-    - "**/mocks/**"
-
 issues:
   exclude-use-default: false
   exclude:
     - "Error return value of .* is not checked"
+  exclude-dirs:
+    - testdata
+    - mocks
+  exclude-rules:
+    - path: "_test\\.go$"
+      linters:
+        - gocyclo
+        - funlen
+        - gosec
+        - gocognit
+        - gomnd
+        - lll
+        - wsl
+        - gomoddirectives
+        - gocritic
+        - gosec
+        - gosimple
+        - govet
+        - ineffassign
+        - staticcheck
+        - typecheck
+        - unused

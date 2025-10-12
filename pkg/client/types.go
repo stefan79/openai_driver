@@ -23,7 +23,7 @@ type TypedResponse[T any] struct {
 
 type Client interface {
 	Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error)
-	CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (*StreamReader, error)
+	CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (StreamReader, error)
 	Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error)
 	Cancel(ctx context.Context, responseId string) error
 }
