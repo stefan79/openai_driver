@@ -9,7 +9,7 @@ type TypeReasoningDef struct {
 	Content TypeReasoningContentDef `json:"content"`
 }
 
-func (o TypeReasoningDef) OutputType() TypeEnum {
+func (o *TypeReasoningDef) OutputType() TypeEnum {
 	return TypeReasoning
 }
 

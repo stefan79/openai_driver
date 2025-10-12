@@ -1,11 +1,12 @@
 package responses
 
 import (
-	"driver/pkg/builder"
-	"driver/pkg/cli"
-	"driver/pkg/config"
 	"fmt"
 	"os"
+
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/cli"
+	"github.com/stefan79/openai-driver/pkg/config"
 
 	"github.com/spf13/cobra"
 )
@@ -33,11 +34,11 @@ var CreateResponseCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("Error overlaying flags: %v\n", err)
 		}
-		client, err := cli.NewClient(o)
+		client, err := cli.NewClient(&o)
 		if err != nil {
 			return fmt.Errorf("Error creating client: %v\n", err)
 		}
-		if err := cli.ResponsesCreateCommand(cmd.Context(), client, builder.NewRegistry(), o); err != nil {
+		if err := cli.ResponsesCreateCommand(cmd.Context(), client, builder.NewRegistry(), &o); err != nil {
 			return fmt.Errorf("Error creating response: %v\n", err)
 		}
 		return nil

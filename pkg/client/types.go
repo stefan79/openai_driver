@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 
-	"driver/pkg/builder"
-	"driver/pkg/openai/responses/resp"
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
 )
 
 type StreamEvent struct {
@@ -23,7 +23,7 @@ type TypedResponse[T any] struct {
 
 type Client interface {
 	Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error)
-	CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (*StreamReader, error)
+	CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (StreamReader, error)
 	Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error)
 	Cancel(ctx context.Context, responseId string) error
 }

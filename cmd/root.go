@@ -1,10 +1,12 @@
 package cmd
 
 import (
-	"driver/cmd/responses"
-	"driver/pkg/config"
 	"fmt"
 	"strings"
+
+	"github.com/stefan79/openai-driver/pkg/config"
+
+	"github.com/stefan79/openai-driver/cmd/responses"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

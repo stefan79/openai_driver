@@ -3,10 +3,11 @@ package cli
 import (
 	"bytes"
 	"context"
-	"driver/pkg/builder"
-	"driver/pkg/client"
-	"driver/pkg/openai/responses/resp"
 	"testing"
+
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/client"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
 )
 
 func TestResponsesCreateCommand_NoOptions(t *testing.T) {
@@ -20,7 +21,7 @@ func TestResponsesCreateCommand_NoOptions(t *testing.T) {
 		Model: model,
 	}
 
-	if err := ResponsesCreateCommand(context.Background(), mockClient, builder.NewRegistry(), o); err != nil {
+	if err := ResponsesCreateCommand(context.Background(), mockClient, builder.NewRegistry(), &o); err != nil {
 		t.Fatal(err)
 	}
 
@@ -48,7 +49,7 @@ func TestResponsesCreateCommand_WithPrompt(t *testing.T) {
 		},
 	}
 
-	if err := ResponsesCreateCommand(context.Background(), mockClient, registry, o); err != nil {
+	if err := ResponsesCreateCommand(context.Background(), mockClient, registry, &o); err != nil {
 		t.Fatal(err)
 	}
 
@@ -158,7 +159,7 @@ func TestResponsesCreateCommand_WithReasoningSummary(t *testing.T) {
 		},
 	}
 
-	err = ResponsesCreateCommand(context.Background(), mockClient, registry, o)
+	err = ResponsesCreateCommand(context.Background(), mockClient, registry, &o)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -191,7 +192,7 @@ func TestResponsesCreateCommand_WithWebSearch(t *testing.T) {
 		WebSearch: true,
 	}
 
-	err := ResponsesCreateCommand(context.Background(), mockClient, registry, o)
+	err := ResponsesCreateCommand(context.Background(), mockClient, registry, &o)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -225,7 +226,7 @@ func TestResponsesCreateCommand_WithWebSearchContextSize(t *testing.T) {
 		WebSearchContextSize: &size,
 	}
 
-	err := ResponsesCreateCommand(context.Background(), mockClient, registry, o)
+	err := ResponsesCreateCommand(context.Background(), mockClient, registry, &o)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -288,7 +289,7 @@ type mockClient struct {
 	createFunc       func(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error)
 	cancelFunc       func(ctx context.Context, responseId string) error
 	retrieveFunc     func(ctx context.Context, responseId string) (*resp.ResponseDef, error)
-	createStreamFunc func(ctx context.Context, model string, options ...builder.ResponsesOption) (*client.StreamReader, error)
+	createStreamFunc func(ctx context.Context, model string, options ...builder.ResponsesOption) (client.StreamReader, error)
 }
 
 func (m *mockClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error) {
@@ -303,6 +304,6 @@ func (m *mockClient) Retrieve(ctx context.Context, responseId string) (*resp.Res
 	return m.retrieveFunc(ctx, responseId)
 }
 
-func (m *mockClient) CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (*client.StreamReader, error) {
+func (m *mockClient) CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (client.StreamReader, error) {
 	return m.createStreamFunc(ctx, model, options...)
 }

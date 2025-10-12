@@ -2,11 +2,12 @@ package cli
 
 import (
 	"context"
-	"driver/pkg/builder"
-	"driver/pkg/client"
-	"driver/pkg/openai/responses/resp"
 	"fmt"
 	"strings"
+
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/client"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
 )
 
 type ResponsesCreateOptions struct {
@@ -24,11 +25,11 @@ type ResponsesCreateOptions struct {
 	WebSearchContextSize *builder.WebSearchContextSize
 }
 
-func NewClient(o ResponsesCreateOptions) (client.Client, error) {
+func NewClient(o *ResponsesCreateOptions) (client.Client, error) {
 	return client.NewClient(o.OpenAIAPIKey, o.BaseUrl, o.Proxy)
 }
 
-func ResponsesCreateCommand(ctx context.Context, client client.Client, registry builder.ResponseRegistry, o ResponsesCreateOptions) error {
+func ResponsesCreateCommand(ctx context.Context, client client.Client, registry builder.ResponseRegistry, o *ResponsesCreateOptions) error {
 	options := []builder.ResponsesOption{}
 	if o.Prompt != "" {
 		options = append(options, registry.TextInput(o.Prompt))

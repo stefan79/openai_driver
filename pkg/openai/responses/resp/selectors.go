@@ -1,6 +1,6 @@
 package resp
 
-import "driver/pkg/openai/responses/resp/output"
+import "github.com/stefan79/openai-driver/pkg/openai/responses/resp/output"
 
 type OutputSelector interface {
 	SelectOutput(output.BaseType) bool

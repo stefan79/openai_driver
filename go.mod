@@ -1,10 +1,12 @@
-module driver
+module github.com/stefan79/openai-driver
 
-go 1.25.1
+go 1.23
 
-require github.com/spf13/cobra v1.8.1
-
-require github.com/spf13/viper v1.16.0
+require (
+	github.com/spf13/cobra v1.8.1
+	github.com/spf13/viper v1.16.0
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -21,5 +23,4 @@ require (
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // direct	
 )

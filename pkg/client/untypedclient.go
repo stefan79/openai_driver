@@ -2,19 +2,22 @@ package client
 
 import (
 	"context"
-	"driver/pkg/builder"
-	"driver/pkg/net"
-	openAIResp "driver/pkg/openai/responses"
-	"driver/pkg/openai/responses/resp"
 	"encoding/json"
 	"fmt"
+
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
+
+	openAIResp "github.com/stefan79/openai-driver/pkg/openai/responses"
+
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/net"
 )
 
 type defaultClient struct {
 	httpClient net.HTTPClient
 }
 
-func NewClient(openApiKey string, baseUrl string, proxy *string) (Client, error) {
+func NewClient(openApiKey, baseUrl string, proxy *string) (Client, error) {
 	httpClient, err := net.NewHTTPClient(openApiKey, baseUrl, proxy)
 	if err != nil {
 		return nil, err
@@ -25,7 +28,7 @@ func NewClient(openApiKey string, baseUrl string, proxy *string) (Client, error)
 }
 
 func (c *defaultClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error) {
-	//Add a mapper function which creates the openAI Request from the ResponseRequest
+	// Add a mapper function which creates the openAI Request from the ResponseRequest
 
 	responsesRequest := openAIResp.ResponsesRequest{
 		Model: &model,
@@ -58,7 +61,7 @@ func (c *defaultClient) Create(ctx context.Context, model string, options ...bui
 	return response, nil
 }
 
-func (c *defaultClient) CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (*StreamReader, error) {
+func (c *defaultClient) CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (StreamReader, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 

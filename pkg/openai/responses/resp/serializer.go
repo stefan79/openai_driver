@@ -1,7 +1,7 @@
 package resp
 
 import (
-	"driver/pkg/openai/responses/resp/output"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp/output"
 )
 
 type OutputSerializer interface {
@@ -12,8 +12,8 @@ type OutputSerializer interface {
 type OutputSerializerFunc func(*output.BaseType) []string
 
 // SelectOutput implements the OutputSelector interface
-func (f OutputSerializerFunc) SelectOutput(o *output.BaseType) []string {
-	return f(o)
+func (f OutputSerializerFunc) SelectOutput(o output.BaseType) []string {
+	return f(&o)
 }
 
 // Predefined selectors
