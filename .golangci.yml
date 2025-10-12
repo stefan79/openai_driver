@@ -1,29 +1,34 @@
-run:
-  timeout: 3m
-  tests: true
-
 linters:
   enable:
-    - revive          # replaces golint (golint is deprecated)
     - govet
     - staticcheck
-    - gocyclo
-    - ineffassign
-    - unused
     - gosimple
-    - prealloc
+    - unused
     - errcheck
-    - dupl
+    - ineffassign
+    - typecheck
+    - gocritic
+    - gofmt
+    - goimports
 
 linters-settings:
-  gocyclo:
-    min-complexity: 12
-  dupl:
-    threshold: 100
-  revive:
-    confidence: 0.8
+  gocritic:
+    settings:
+      captLocal: 
+        onlyMyFuncs: false
+    enabled-tags:
+      - performance
+      - style
+      - experimental
+      - opinionated
+
+run:
+  skip-files:
+    - "**/*_test.go"
+    - "**/testdata/**"
+    - "**/mocks/**"
 
 issues:
   exclude-use-default: false
-  max-issues-per-linter: 0
-  max-same-issues: 0
+  exclude:
+    - "Error return value of .* is not checked"

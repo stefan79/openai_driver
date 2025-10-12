@@ -37,6 +37,7 @@ Thumbs.db
 /driver
 /bin/
 /dist/
+coverage.txt
 
 # Config Files
 oai.yaml

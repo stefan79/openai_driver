@@ -1,6 +1,6 @@
 package main
 
-import "driver/cmd"
+import "github.com/stefan79/openai-driver/cmd"
 
 func main() {
 	cmd.Execute()

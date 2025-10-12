@@ -1,7 +1,7 @@
 package resp
 
 import (
-	"driver/pkg/openai/responses/resp/output"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp/output"
 )
 
 type OutputSerializer interface {

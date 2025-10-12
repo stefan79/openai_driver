@@ -1,8 +1,9 @@
 package builder
 
 import (
-	"driver/pkg/openai/responses"
 	"testing"
+
+	"github.com/stefan79/openai-driver/pkg/openai/responses"
 )
 
 func TestResponsesReasoningEffort(t *testing.T) {

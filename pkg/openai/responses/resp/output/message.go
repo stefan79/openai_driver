@@ -1,6 +1,6 @@
 package output
 
-import "driver/pkg/openai/responses"
+import "github.com/stefan79/openai-driver/pkg/openai/responses"
 
 // Used at /response/output[@type=message]/content/type
 type TypeMessageContentTypeEnum string

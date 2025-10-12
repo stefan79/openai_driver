@@ -1,11 +1,12 @@
 package responses
 
 import (
-	"driver/pkg/builder"
-	"driver/pkg/cli"
-	"driver/pkg/config"
 	"fmt"
 	"os"
+
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/cli"
+	"github.com/stefan79/openai-driver/pkg/config"
 
 	"github.com/spf13/cobra"
 )

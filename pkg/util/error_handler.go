@@ -25,7 +25,7 @@ func (h *ErrorHandler) Push(field string, err error) {
 		if field != "" {
 			errMsg = fmt.Sprintf("%s: %s", field, errMsg)
 		}
-		h.errs = append(h.errs, fmt.Errorf(errMsg))
+		h.errs = append(h.errs, fmt.Errorf("%v", errMsg))
 	}
 }
 
@@ -43,7 +43,7 @@ func (h *ErrorHandler) Error() error {
 	}
 
 	if len(errorMsgs) == 1 {
-		return fmt.Errorf(errorMsgs[0])
+		return fmt.Errorf("%v", errorMsgs[0])
 	}
 	return fmt.Errorf("multiple errors:\n  - %s", strings.Join(errorMsgs, "\n  - "))
 }

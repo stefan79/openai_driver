@@ -1,6 +1,6 @@
 package builder
 
-import "driver/pkg/openai/responses"
+import "github.com/stefan79/openai-driver/pkg/openai/responses"
 
 type ResponsesOption func(*responses.ResponsesRequest)
 

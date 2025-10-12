@@ -3,10 +3,11 @@ package cli
 import (
 	"bytes"
 	"context"
-	"driver/pkg/builder"
-	"driver/pkg/client"
-	"driver/pkg/openai/responses/resp"
 	"testing"
+
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/client"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
 )
 
 func TestResponsesCreateCommand_NoOptions(t *testing.T) {

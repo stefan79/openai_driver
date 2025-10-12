@@ -1,9 +1,10 @@
 package output
 
 import (
-	"driver/pkg/util"
 	"encoding/json"
 	"fmt"
+
+	"github.com/stefan79/openai-driver/pkg/util"
 )
 
 var outputMessageAnnotationsRegistry = util.NewRegistry[BaseTypeMessageContentTypeOutputTextAnnotations]()

@@ -1,10 +1,11 @@
 package builder
 
 import (
-	"driver/pkg/openai"
-	"driver/pkg/openai/responses"
 	"mime"
 	"path/filepath"
+
+	"github.com/stefan79/openai-driver/pkg/openai"
+	"github.com/stefan79/openai-driver/pkg/openai/responses"
 )
 
 func responsesWithFileInput(name string, data []byte) ResponsesOption {

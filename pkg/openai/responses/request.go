@@ -1,6 +1,6 @@
 package responses
 
-import "driver/pkg/openai"
+import "github.com/stefan79/openai-driver/pkg/openai"
 
 type Includes string
 

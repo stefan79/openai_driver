@@ -1,9 +1,10 @@
 package resp
 
 import (
-	"driver/pkg/openai/responses/resp/output"
-	"driver/pkg/util"
 	"encoding/json"
+
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp/output"
+	"github.com/stefan79/openai-driver/pkg/util"
 )
 
 var outputRegistry = util.NewRegistry[output.BaseType]()

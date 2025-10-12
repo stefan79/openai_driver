@@ -1,8 +1,9 @@
 package builder
 
 import (
-	"driver/pkg/openai/responses"
 	"fmt"
+
+	"github.com/stefan79/openai-driver/pkg/openai/responses"
 )
 
 type WebSearchContextSize string

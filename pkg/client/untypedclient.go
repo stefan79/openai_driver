@@ -2,12 +2,15 @@ package client
 
 import (
 	"context"
-	"driver/pkg/builder"
-	"driver/pkg/net"
-	openAIResp "driver/pkg/openai/responses"
-	"driver/pkg/openai/responses/resp"
 	"encoding/json"
 	"fmt"
+
+	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
+
+	openAIResp "github.com/stefan79/openai-driver/pkg/openai/responses"
+
+	"github.com/stefan79/openai-driver/pkg/builder"
+	"github.com/stefan79/openai-driver/pkg/net"
 )
 
 type defaultClient struct {
