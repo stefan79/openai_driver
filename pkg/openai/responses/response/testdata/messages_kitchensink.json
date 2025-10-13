@@ -8,7 +8,20 @@
             "content": [
                 {
                     "type": "output_text",
-                    "text": "Hello, world!"
+                    "text": "Hello, world!",
+                    "annotations": [
+                        {
+                            "type": "file_citation",
+                            "file_id": "1",
+                            "file_name": "file1.txt",
+                            "file_index": 1
+                        },
+                        {
+                            "type": "url_citation",
+                            "url": "https://example.com",
+                            "title": "Example"
+                        }
+                    ]
                 },
                 {
                     "type": "output_refusal",

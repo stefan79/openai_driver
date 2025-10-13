@@ -23,7 +23,7 @@ func init() {
 		return &OutputTypeMessageContentTypeOutputTextAnnotationsFileCitationDef{}
 	})
 	outputMessageAnnotationsRegistry.Register("url_citation", func() BaseOutputTypeMessageContentTypeOutputTextAnnotations {
-		return &OutputContentMessageTextAnnotationUrlCitation{}
+		return &OutputTypeMessageContentTypeOutputTextMessageTextAnnotationUrlCitation{}
 	})
 	outputMessageAnnotationsRegistry.Register("container_file_citation", func() BaseOutputTypeMessageContentTypeOutputTextAnnotations {
 		return &OutputContentMessageTextAnnotationContainerFilerCitation{}
@@ -159,7 +159,7 @@ func (t *OutputTypeMessageContentTypeOutputTextAnnotationsFileCitationDef) Annot
 }
 
 // Used at /response/output[@type=message]/content[@type=output_text]/annotations[@type=url_citation]]
-type OutputContentMessageTextAnnotationUrlCitation struct {
+type OutputTypeMessageContentTypeOutputTextMessageTextAnnotationUrlCitation struct {
 	Type       OutputTypeMessageContentTypeOutputTextAnnotationsTypeEnum `json:"type"`
 	EndIndex   int                                                       `json:"end_index"`
 	StartIndex int                                                       `json:"start_index"`
@@ -167,7 +167,7 @@ type OutputContentMessageTextAnnotationUrlCitation struct {
 	Url        string                                                    `json:"url"`
 }
 
-func (t OutputContentMessageTextAnnotationUrlCitation) AnnotationType() OutputTypeMessageContentTypeOutputTextAnnotationsTypeEnum {
+func (t OutputTypeMessageContentTypeOutputTextMessageTextAnnotationUrlCitation) AnnotationType() OutputTypeMessageContentTypeOutputTextAnnotationsTypeEnum {
 	return OutputTypeMessageContentTypeOutputTextAnnotationsTypeUrlCitation
 }
 
