@@ -44,8 +44,8 @@ func NewFileClient(apiKey, baseUrl string, proxy *string) (client.Client, error)
 	return client.NewClient(apiKey, baseUrl, proxy)
 }
 
-func FilesUploadCommand(ctx context.Context, client client.Client, registry builder.FileRegistry, o *FilesUploadOptions) error {
-	options := []builder.FileUploadOption{}
+func FilesUploadCommand(ctx context.Context, client client.Client, registry builder.FilesRegistry, o *FilesUploadOptions) error {
+	options := []builder.FilesOption{}
 	options = append(options, registry.Purpose(o.Purpose))
 	options = append(options, registry.LocalFile(o.FileName, o.FileData))
 	file, err := client.UploadFile(ctx, options...)

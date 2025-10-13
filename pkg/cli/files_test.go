@@ -17,8 +17,8 @@ func TestFilesUploadCommand(t *testing.T) {
 	registry := &mockFileRegistry{}
 	client := &mockFileClient{}
 	expected := &openaifiles.File{Id: "file-123"}
-	client.uploadFunc = func(ctx context.Context, options ...builder.FileUploadOption) (*openaifiles.File, error) {
-		req, err := builder.BuildUploadRequest(options...)
+	client.uploadFunc = func(ctx context.Context, options ...builder.FilesOption) (*openaifiles.File, error) {
+		req, err := builder.BuildFilesUploadRequest(options...)
 		if err != nil {
 			t.Fatalf("unexpected error applying options: %v", err)
 		}
@@ -95,7 +95,7 @@ type mockFileRegistry struct {
 	uploadCalled bool
 }
 
-func (m *mockFileRegistry) Purpose(purpose string) builder.FileUploadOption {
+func (m *mockFileRegistry) Purpose(purpose string) builder.FilesOption {
 	return func(req *openaifiles.UploadRequest) error {
 		m.uploadCalled = true
 		if purpose == "" {
@@ -106,30 +106,32 @@ func (m *mockFileRegistry) Purpose(purpose string) builder.FileUploadOption {
 	}
 }
 
-func (m *mockFileRegistry) LocalFile(name string, data []byte) builder.FileUploadOption {
+func (m *mockFileRegistry) LocalFile(name string, data []byte) builder.FilesOption {
 	return func(req *openaifiles.UploadRequest) error {
 		m.uploadCalled = true
 		req.FileName = name
-		req.File = openai.NewBase64Bytes(data, "")
+		base64 := openai.NewBase64Bytes(data, "")
+		base64.SetMimeTypeFromFilename(name)
+		req.File = base64
 		return nil
 	}
 }
 
-func (m *mockFileRegistry) Upload(options ...builder.FileUploadOption) (*openaifiles.UploadRequest, error) {
+func (m *mockFileRegistry) Upload(options ...builder.FilesOption) (*openaifiles.UploadRequest, error) {
 	m.uploadCalled = true
-	return builder.BuildUploadRequest(options...)
+	return builder.BuildFilesUploadRequest(options...)
 }
 
-var _ builder.FileRegistry = (*mockFileRegistry)(nil)
+var _ builder.FilesRegistry = (*mockFileRegistry)(nil)
 
 type mockFileClient struct {
-	uploadFunc   func(ctx context.Context, options ...builder.FileUploadOption) (*openaifiles.File, error)
+	uploadFunc   func(ctx context.Context, options ...builder.FilesOption) (*openaifiles.File, error)
 	listFunc     func(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error)
 	retrieveFunc func(ctx context.Context, fileID string) (*openaifiles.File, error)
 	deleteFunc   func(ctx context.Context, fileID string) (*openaifiles.DeleteResponse, error)
 }
 
-func (m *mockFileClient) UploadFile(ctx context.Context, options ...builder.FileUploadOption) (*openaifiles.File, error) {
+func (m *mockFileClient) UploadFile(ctx context.Context, options ...builder.FilesOption) (*openaifiles.File, error) {
 	if m.uploadFunc == nil {
 		return nil, errors.New("upload not implemented")
 	}

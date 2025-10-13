@@ -310,7 +310,7 @@ func (m *mockClient) CreateStream(ctx context.Context, model string, options ...
 	return m.createStreamFunc(ctx, model, options...)
 }
 
-func (m *mockClient) UploadFile(ctx context.Context, options ...builder.FileUploadOption) (*openaifiles.File, error) {
+func (m *mockClient) UploadFile(ctx context.Context, options ...builder.FilesOption) (*openaifiles.File, error) {
 	return nil, errors.New("not implemented")
 }
 

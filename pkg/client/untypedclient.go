@@ -77,9 +77,12 @@ func (c *defaultClient) Cancel(ctx context.Context, responseId string) error {
 	return fmt.Errorf("not implemented")
 }
 
-func (c *defaultClient) UploadFile(ctx context.Context, options ...builder.FileUploadOption) (*openAIFiles.File, error) {
-	req, err := builder.BuildUploadRequest(options...)
-	if err != nil {
+func (c *defaultClient) UploadFile(ctx context.Context, options ...builder.FilesOption) (*openAIFiles.File, error) {
+	req := &openAIFiles.UploadRequest{}
+	if err := builder.ApplyFilesOptions(req, options...); err != nil {
+		return nil, err
+	}
+	if err := builder.ValidateFilesUploadRequest(req); err != nil {
 		return nil, err
 	}
 	body := &bytes.Buffer{}
