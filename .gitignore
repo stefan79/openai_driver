@@ -38,6 +38,7 @@ Thumbs.db
 /bin/
 /dist/
 coverage.txt
+coverage.html
 
 # Config Files
 oai.yaml

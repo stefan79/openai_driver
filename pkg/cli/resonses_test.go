@@ -9,7 +9,7 @@ import (
 	"github.com/stefan79/openai-driver/pkg/builder"
 	"github.com/stefan79/openai-driver/pkg/client"
 	openaifiles "github.com/stefan79/openai-driver/pkg/openai/files"
-	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
 )
 
 func TestResponsesCreateCommand_NoOptions(t *testing.T) {
@@ -281,20 +281,20 @@ func (m *mockRegistry) FileInput(name string, data []byte) builder.ResponsesOpti
 	return m.FileInputFunc(name, data)
 }
 
-func clientCreateMockFunction(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error) {
+func clientCreateMockFunction(ctx context.Context, model string, options ...builder.ResponsesOption) (*response.ResponseDef, error) {
 	receivedModel = model
 	receivedOptions = options
-	return &resp.ResponseDef{}, nil
+	return &response.ResponseDef{}, nil
 }
 
 type mockClient struct {
-	createFunc       func(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error)
+	createFunc       func(ctx context.Context, model string, options ...builder.ResponsesOption) (*response.ResponseDef, error)
 	cancelFunc       func(ctx context.Context, responseId string) error
-	retrieveFunc     func(ctx context.Context, responseId string) (*resp.ResponseDef, error)
+	retrieveFunc     func(ctx context.Context, responseId string) (*response.ResponseDef, error)
 	createStreamFunc func(ctx context.Context, model string, options ...builder.ResponsesOption) (client.StreamReader, error)
 }
 
-func (m *mockClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error) {
+func (m *mockClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*response.ResponseDef, error) {
 	return m.createFunc(ctx, model, options...)
 }
 
@@ -302,7 +302,7 @@ func (m *mockClient) Cancel(ctx context.Context, responseId string) error {
 	return m.cancelFunc(ctx, responseId)
 }
 
-func (m *mockClient) Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error) {
+func (m *mockClient) Retrieve(ctx context.Context, responseId string) (*response.ResponseDef, error) {
 	return m.retrieveFunc(ctx, responseId)
 }
 
