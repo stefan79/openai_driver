@@ -7,7 +7,7 @@ import (
 	"github.com/stefan79/openai-driver/pkg/builder"
 	"github.com/stefan79/openai-driver/pkg/cli"
 	"github.com/stefan79/openai-driver/pkg/config"
-	outputter "github.com/stefan79/openai-driver/pkg/output"
+	"github.com/stefan79/openai-driver/pkg/output"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +17,7 @@ var (
 	proxy                string
 	baseUrl              string
 	model                string
-	output               string
+	outputFormat         string
 	prompt               string
 	effort               string
 	summary              string
@@ -31,16 +31,16 @@ var CreateResponseCmd = &cobra.Command{
 	Short: "Create a response",
 	Long:  `Create a response`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		o, err := overlayCreateFlags(cmd, config.GetCfg(cmd))
-		outputter := outputter.NewDefaultOutputter()
+		o, err := overlayCreateFlags(cmd, config.GetCfg(cmd.Context()))
+		oer := output.GetOutputter(cmd.Context())
 		if err != nil {
 			return fmt.Errorf("Error overlaying flags: %v\n", err)
 		}
-		client, err := cli.NewClient(outputter, &o)
+		client, err := cli.NewClient(oer, &o)
 		if err != nil {
 			return fmt.Errorf("Error creating client: %v\n", err)
 		}
-		if err := cli.ResponsesCreateCommand(cmd.Context(), outputter, client, builder.NewRegistry(), &o); err != nil {
+		if err := cli.ResponsesCreateCommand(cmd.Context(), oer, client, builder.NewRegistry(), &o); err != nil {
 			return fmt.Errorf("Error creating response: %v\n", err)
 		}
 		return nil
@@ -52,7 +52,7 @@ func init() {
 	CreateResponseCmd.Flags().StringVar(&proxy, "proxy", "", "Proxy")
 	CreateResponseCmd.Flags().StringVar(&model, "model", "", "Model")
 	CreateResponseCmd.Flags().StringVar(&baseUrl, "base-url", "", "Base URL")
-	CreateResponseCmd.Flags().StringVar(&output, "output", "", "Output")
+	CreateResponseCmd.Flags().StringVar(&outputFormat, "output", "", "Output")
 	CreateResponseCmd.Flags().StringVar(&prompt, "prompt", "", "Prompt")
 	CreateResponseCmd.Flags().StringVar(&effort, "effort", "", "Effort")
 	CreateResponseCmd.Flags().StringVar(&summary, "summary", "", "Summary")
@@ -82,7 +82,7 @@ func overlayCreateFlags(cmd *cobra.Command, base *config.Config) (cli.ResponsesC
 		o.BaseUrl = baseUrl
 	}
 	if cmd.Flags().Changed("output") {
-		o.Output = output
+		o.Output = outputFormat
 	}
 	if cmd.Flags().Changed("prompt") {
 		o.Prompt = prompt

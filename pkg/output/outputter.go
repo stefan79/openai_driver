@@ -1,8 +1,14 @@
 package output
 
 import (
+	"context"
+
 	"github.com/fatih/color"
 )
+
+type CtxKey int
+
+const OutputterKey CtxKey = 1
 
 type defaultOutputter struct {
 	styles outputStyles
@@ -24,6 +30,14 @@ func NewDefaultOutputter() Outputter {
 	return &defaultOutputter{
 		styles: styles,
 	}
+}
+
+func GetOutputter(ctx context.Context) Outputter {
+	return ctx.Value(OutputterKey).(Outputter)
+}
+
+func SetOutputter(ctx context.Context, outputter Outputter) context.Context {
+	return context.WithValue(ctx, OutputterKey, outputter)
 }
 
 func (d *defaultOutputter) SetLevel(level int) {

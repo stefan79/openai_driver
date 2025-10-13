@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
@@ -36,7 +35,7 @@ var (
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.oai.yaml)")
-	rootCmd.PersistentFlags().IntVar(&verboseLevel, "verbose", 0, "output format (default is json)")
+	rootCmd.PersistentFlags().IntVar(&verboseLevel, "verbose", 3, "output format (default is json)")
 	rootCmd.AddCommand(responses.ResponsesCmd)
 }
 
@@ -45,16 +44,17 @@ func Execute() error {
 }
 
 func initCommand(cmd *cobra.Command, _ []string) error {
-	outputter, err := initOutputter(cmd)
+	oer, err := initOutputter(cmd)
 	if err != nil {
 		return err
 	}
-	config, err := initConfig(cmd)
+	cfg, err := initConfig(cmd)
 	if err != nil {
 		return err
 	}
-	ctx := context.WithValue(cmd.Context(), CfgKey, config)
-	ctx = context.WithValue(ctx, OutputterKey, outputter)
+	ctx := cmd.Context()
+	ctx = output.SetOutputter(ctx, oer)
+	ctx = config.SetCfg(ctx, cfg)
 	cmd.SetContext(ctx)
 	return nil
 }
@@ -63,6 +63,7 @@ func initOutputter(cmd *cobra.Command) (output.Outputter, error) {
 	if verboseLevel < -1 || verboseLevel > 3 {
 		return nil, fmt.Errorf("invalid verbose level: %d. Needs to be between -1 and 3", verboseLevel)
 	}
+	fmt.Println("Verbose level: ", verboseLevel)
 	outputter := output.NewDefaultOutputter()
 	outputter.SetLevel(verboseLevel)
 	return outputter, nil
@@ -81,7 +82,7 @@ func initConfig(cmd *cobra.Command) (*config.Config, error) {
 	if cfgFile != "" {
 		v.SetConfigFile(cfgFile)
 		if err := v.ReadInConfig(); err != nil {
-			return fmt.Errorf("read config: %w", err)
+			return nil, fmt.Errorf("read config: %w", err)
 		}
 	} else {
 		v.SetConfigName("oai")
@@ -99,5 +100,5 @@ func initConfig(cmd *cobra.Command) (*config.Config, error) {
 		return nil, fmt.Errorf("unmarshal config: %w", err)
 	}
 
-	return cfg, nil
+	return &cfg, nil
 }
