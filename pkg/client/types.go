@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/stefan79/openai-driver/pkg/builder"
-	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
 )
 
 type StreamEvent struct {
@@ -17,14 +17,14 @@ type StreamReader interface {
 }
 
 type TypedResponse[T any] struct {
-	*resp.ResponseDef
+	*response.ResponseDef
 	ParsedOutput T
 }
 
 type Client interface {
-	Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error)
+	Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*response.ResponseDef, error)
 	CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (StreamReader, error)
-	Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error)
+	Retrieve(ctx context.Context, responseId string) (*response.ResponseDef, error)
 	Cancel(ctx context.Context, responseId string) error
 }
 

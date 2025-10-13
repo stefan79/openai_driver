@@ -1,26 +1,25 @@
-package resp
+package response
 
 import (
 	"encoding/json"
 
-	"github.com/stefan79/openai-driver/pkg/openai/responses/resp/output"
 	"github.com/stefan79/openai-driver/pkg/util"
 )
 
-var outputRegistry = util.NewRegistry[output.BaseType]()
+var outputRegistry = util.NewRegistry[OutputBaseType]()
 
 func init() {
-	outputRegistry.Register("message", func() output.BaseType {
-		return &output.TypeMessageDef{}
+	outputRegistry.Register("message", func() OutputBaseType {
+		return &OutputTypeMessageDef{}
 	})
-	outputRegistry.Register("file_search_call", func() output.BaseType {
-		return &output.TypeFileSearchCallDef{}
+	outputRegistry.Register("file_search_call", func() OutputBaseType {
+		return &OutputTypeFileSearchCallDef{}
 	})
-	outputRegistry.Register("web_search_call", func() output.BaseType {
-		return &output.TypeWebSearchCallDef{}
+	outputRegistry.Register("web_search_call", func() OutputBaseType {
+		return &OutputTypeWebSearchCallDef{}
 	})
-	outputRegistry.Register("reasoning", func() output.BaseType {
-		return &output.TypeReasoningDef{}
+	outputRegistry.Register("reasoning", func() OutputBaseType {
+		return &OutputTypeReasoningDef{}
 	})
 }
 

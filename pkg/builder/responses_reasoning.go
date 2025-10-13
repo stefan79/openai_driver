@@ -3,7 +3,7 @@ package builder
 import (
 	"fmt"
 
-	"github.com/stefan79/openai-driver/pkg/openai/responses"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/request"
 )
 
 type (
@@ -23,18 +23,18 @@ const (
 )
 
 func responsesWithReasoningEffort(e ResponsesReasoningEffort) ResponsesOption {
-	return func(r *responses.ResponsesRequest) {
+	return func(r *request.RequestDef) {
 		if r.Reasoning == nil {
-			r.Reasoning = &responses.Reasoning{}
+			r.Reasoning = &request.Reasoning{}
 		}
 		r.Reasoning.Effort = e.toReasoningEffort()
 	}
 }
 
 func responsesWithReasoningSummary(s ResponsesReasoningSummary) ResponsesOption {
-	return func(r *responses.ResponsesRequest) {
+	return func(r *request.RequestDef) {
 		if r.Reasoning == nil {
-			r.Reasoning = &responses.Reasoning{}
+			r.Reasoning = &request.Reasoning{}
 		}
 		r.Reasoning.Summary = s.toReasoningSummary()
 	}
@@ -68,12 +68,12 @@ func ParseReasoningSummary(i string) (ResponsesReasoningSummary, error) {
 	}
 }
 
-func (e ResponsesReasoningEffort) toReasoningEffort() *responses.ReasoningEffort {
-	out := responses.ReasoningEffort(e)
+func (e ResponsesReasoningEffort) toReasoningEffort() *request.ReasoningEffort {
+	out := request.ReasoningEffort(e)
 	return &out
 }
 
-func (s ResponsesReasoningSummary) toReasoningSummary() *responses.ReasoningSummary {
-	out := responses.ReasoningSummary(s)
+func (s ResponsesReasoningSummary) toReasoningSummary() *request.ReasoningSummary {
+	out := request.ReasoningSummary(s)
 	return &out
 }

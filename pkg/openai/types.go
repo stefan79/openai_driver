@@ -1,4 +1,4 @@
-package responses
+package openai
 
 type Role string
 
