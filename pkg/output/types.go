@@ -7,4 +7,6 @@ type Outputter interface {
 	Message(string)
 
 	Output(o any)
+
+	SetLevel(int)
 }

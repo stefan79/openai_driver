@@ -6,10 +6,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type ctxKey int
-
-const cfgKey ctxKey = 1
-
 type Config struct {
 	OpenAI     OpenAIConfig `mapstructure:"openai"`
 	HttpConfig HttpConfig   `mapstructure:"http"`

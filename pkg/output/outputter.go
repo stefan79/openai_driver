@@ -6,6 +6,7 @@ import (
 
 type defaultOutputter struct {
 	styles outputStyles
+	level  int
 }
 
 type outputStyles struct {
@@ -25,19 +26,30 @@ func NewDefaultOutputter() Outputter {
 	}
 }
 
+func (d *defaultOutputter) SetLevel(level int) {
+	d.level = level
+}
+
 func (d *defaultOutputter) VVVMessage(msg string) {
-	d.styles.vvv.Println(msg)
+	if d.level >= 3 {
+		d.styles.vvv.Println(msg)
+	}
 }
 func (d *defaultOutputter) VVMessage(msg string) {
-	d.styles.vv.Println(msg)
+	if d.level >= 2 {
+		d.styles.vv.Println(msg)
+	}
 }
 func (d *defaultOutputter) VMessage(msg string) {
-	d.styles.v.Println(msg)
+	if d.level >= 1 {
+		d.styles.v.Println(msg)
+	}
 }
 func (d *defaultOutputter) Message(msg string) {
-	d.styles.m.Println(msg)
+	if d.level >= 0 {
+		d.styles.m.Println(msg)
+	}
 }
 func (d *defaultOutputter) Output(o any) {
-
 	d.styles.o.Println(o)
 }
