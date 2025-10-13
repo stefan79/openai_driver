@@ -1,0 +1,21 @@
+{
+    "output": [
+        {
+            "type": "message",
+            "id": "1",
+            "status": "completed",
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "output_text",
+                    "text": "Hello, world!"
+                },
+                {
+                    "type": "output_refusal",
+                    "refusal": "I wont do this!"
+                }
+
+            ]
+        }
+    ]
+}
