@@ -45,11 +45,10 @@ func NewFileClient(apiKey, baseUrl string, proxy *string) (client.Client, error)
 }
 
 func FilesUploadCommand(ctx context.Context, client client.Client, registry builder.FileRegistry, o *FilesUploadOptions) error {
-	req, err := registry.Upload(o.Purpose, o.FileName, o.FileData)
-	if err != nil {
-		return err
-	}
-	file, err := client.UploadFile(ctx, req)
+	options := []builder.FileUploadOption{}
+	options = append(options, registry.Purpose(o.Purpose))
+	options = append(options, registry.LocalFile(o.FileName, o.FileData))
+	file, err := client.UploadFile(ctx, options...)
 	if err != nil {
 		return fmt.Errorf("Error uploading file: %v\n", err)
 	}

@@ -1,9 +1,11 @@
 package files
 
+import "github.com/stefan79/openai-driver/pkg/openai"
+
 type UploadRequest struct {
-	Purpose  string
-	FileName string
-	FileData []byte
+	Purpose  string              `json:"purpose"`
+	FileName string              `json:"file_name"`
+	File     *openai.Base64Bytes `json:"file"`
 }
 
 type File struct {

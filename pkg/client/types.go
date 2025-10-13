@@ -27,7 +27,7 @@ type Client interface {
 	CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (StreamReader, error)
 	Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error)
 	Cancel(ctx context.Context, responseId string) error
-	UploadFile(ctx context.Context, req *openaifiles.UploadRequest) (*openaifiles.File, error)
+	UploadFile(ctx context.Context, options ...builder.FileUploadOption) (*openaifiles.File, error)
 	ListFiles(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error)
 	RetrieveFile(ctx context.Context, fileID string) (*openaifiles.File, error)
 	DeleteFile(ctx context.Context, fileID string) (*openaifiles.DeleteResponse, error)

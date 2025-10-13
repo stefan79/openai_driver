@@ -77,14 +77,18 @@ func (c *defaultClient) Cancel(ctx context.Context, responseId string) error {
 	return fmt.Errorf("not implemented")
 }
 
-func (c *defaultClient) UploadFile(ctx context.Context, req *openAIFiles.UploadRequest) (*openAIFiles.File, error) {
+func (c *defaultClient) UploadFile(ctx context.Context, options ...builder.FileUploadOption) (*openAIFiles.File, error) {
+	req, err := builder.BuildUploadRequest(options...)
+	if err != nil {
+		return nil, err
+	}
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	fileWriter, err := writer.CreateFormFile("file", req.FileName)
 	if err != nil {
 		return nil, err
 	}
-	if _, err := fileWriter.Write(req.FileData); err != nil {
+	if _, err := fileWriter.Write(req.File.Data); err != nil {
 		return nil, err
 	}
 	if err := writer.WriteField("purpose", req.Purpose); err != nil {
