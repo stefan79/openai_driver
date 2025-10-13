@@ -17,7 +17,18 @@ type badParentTest struct {
 	More     []childTest `table_children:"morekids"`
 }
 
-func TestDefaultColumnsFromType_NegativeCase(t *testing.T) {
+type noTagsTest struct {
+	ID   int
+	Name string
+}
+
+func TestDefaultColumnsFromType_NoTags(t *testing.T) {
+	if _, err := DefaultColumnsFromType(noTagsTest{}); err == nil {
+		t.Fatalf("expected error for no table tags")
+	}
+}
+
+func TestDefaultColumnsFromType_MultipleChildren(t *testing.T) {
 	if _, err := DefaultColumnsFromType(badParentTest{}); err == nil {
 		t.Fatalf("expected error for multiple table_children tags")
 	}
@@ -41,11 +52,5 @@ func TestDefaultColumnsFromType_PositiveCase(t *testing.T) {
 	}
 	if cols[3].Header != "mychildren.name" {
 		t.Errorf("expected fourth column to be 'mychildren.name', got %s", cols[3].Header)
-	}
-}
-
-func TestDefaultColumnsFromType_MultipleChildren(t *testing.T) {
-	if _, err := DefaultColumnsFromType(badParentTest{}); err == nil {
-		t.Fatalf("expected error for multiple table_children tags")
 	}
 }

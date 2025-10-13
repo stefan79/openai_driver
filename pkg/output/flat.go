@@ -15,7 +15,7 @@ type Options struct {
 	RowsetPath string
 
 	// Bubble nested field headers without prefix (OwnerID, Owner next to State).
-	PrefixNested bool // set false to inline headers (recommended here)
+	PrefixNested bool // include parent field prefixes; set false to inline headers
 
 	// Summaries for non-children slices on the same struct level.
 	SliceSummary string // "join" | "count" | "first"
@@ -25,8 +25,8 @@ type Options struct {
 
 func DefaultOptions() Options {
 	return Options{
-		RowsetPath:   "",    // auto from table_children
-		PrefixNested: false, // inline by default, per your requirement
+		RowsetPath:   "",  // auto from table_children
+		PrefixNested: true,
 		SliceSummary: "join",
 		JoinSep:      ",",
 		TimeFormat:   time.RFC3339,
@@ -90,20 +90,23 @@ func Flatten(v any, opts Options) ([]map[string]any, error) {
 	}
 
 	out := []map[string]any{}
-	if err := flattenInto(rv, opts /*path*/, "" /*cur*/, map[string]any{}, &out); err != nil {
+	if err := flattenInto(rv, opts /*path*/, "" /*cur*/, map[string]any{}, &out, true); err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func flattenInto(val reflect.Value, opts Options, path string, cur map[string]any, out *[]map[string]any) error {
+func flattenInto(val reflect.Value, opts Options, path string, cur map[string]any, out *[]map[string]any, emit bool) error {
 	val = derefValue(val)
 	switch val.Kind() {
 	case reflect.Struct:
 		rt := val.Type()
+		timeType := reflect.TypeOf(time.Time{})
 
 		// Find at most one children slice here (by table_children tag).
 		var childFieldIdx = -1
+		var childPath string
+
 		for i := 0; i < rt.NumField(); i++ {
 			f := rt.Field(i)
 			if f.PkgPath != "" {
@@ -118,6 +121,16 @@ func flattenInto(val reflect.Value, opts Options, path string, cur map[string]an
 					return fmt.Errorf("table_children must be a slice: %s.%s", rt.Name(), f.Name)
 				}
 				childFieldIdx = i
+
+				label := meta.ChildLabel
+				if label == "" {
+					label = fieldName(&f)
+				}
+				if path != "" {
+					childPath = joinPath(path, label)
+				} else {
+					childPath = label
+				}
 			}
 		}
 
@@ -147,19 +160,26 @@ func flattenInto(val reflect.Value, opts Options, path string, cur map[string]an
 					return err
 				}
 
-			case ft.Kind() == reflect.Struct && ft != reflect.TypeOf(time.Time{}):
-				// Nested struct: bubble its table-tagged fields (no prefix by default)
-				if err := flattenInto(fv, opts /*nested path*/, pathForNested(path, &f, opts), cur, out); err != nil {
+			case ft.Kind() == reflect.Struct && ft != timeType:
+				nestedPath := path
+				if meta.Header != "" {
+					if nestedPath != "" {
+						nestedPath = joinPath(nestedPath, meta.Header)
+					} else {
+						nestedPath = meta.Header
+					}
+				} else if opts.PrefixNested {
+					nestedPath = joinPath(nestedPath, fieldName(&f))
+				}
+				// Nested struct: bubble its table-tagged fields; prevent premature row emission.
+				if err := flattenInto(fv, opts /*nested path*/, nestedPath, cur, out, false); err != nil {
 					return err
 				}
 
 			default:
 				// Scalar/map/time → include if it has a header (table tag)
 				if meta.Header != "" {
-					key := meta.Header
-					if opts.PrefixNested && path != "" && !strings.Contains(meta.Header, ".") {
-						key = path + "." + meta.Header
-					}
+					key := qualify(path, meta.Header, opts)
 					cur[key] = scalarize(fv, opts)
 				}
 			}
@@ -170,7 +190,7 @@ func flattenInto(val reflect.Value, opts Options, path string, cur map[string]an
 			cv := val.Field(childFieldIdx)
 			for j := 0; j < cv.Len(); j++ {
 				branch := cloneMap(cur)
-				if err := flattenInto(cv.Index(j), opts /*path*/, "", branch, out); err != nil {
+				if err := flattenInto(cv.Index(j), opts /*path*/, childPath, branch, out, true); err != nil {
 					return err
 				}
 			}
@@ -178,14 +198,16 @@ func flattenInto(val reflect.Value, opts Options, path string, cur map[string]an
 		}
 
 		// No children slice here → current cur becomes a row.
-		*out = append(*out, cloneMap(cur))
+		if emit {
+			*out = append(*out, cloneMap(cur))
+		}
 		return nil
 
 	case reflect.Slice, reflect.Array:
 		// Slices are only expected when we're inside children expansion; each element → row
 		for i := 0; i < val.Len(); i++ {
 			branch := cloneMap(cur)
-			if err := flattenInto(val.Index(i), opts, path, branch, out); err != nil {
+			if err := flattenInto(val.Index(i), opts, path, branch, out, emit); err != nil {
 				return err
 			}
 		}
@@ -193,7 +215,9 @@ func flattenInto(val reflect.Value, opts Options, path string, cur map[string]an
 
 	default:
 		// Scalar leaf: just close a row
-		*out = append(*out, cloneMap(cur))
+		if emit {
+			*out = append(*out, cloneMap(cur))
+		}
 		return nil
 	}
 }
@@ -218,15 +242,6 @@ func summarizeSliceInto(cur map[string]any, fv reflect.Value, opts Options, path
 		cur[key] = strings.Join(parts, opts.JoinSep)
 	}
 	return nil
-}
-
-func pathForNested(path string, f *reflect.StructField, opts Options) string {
-	// With PrefixNested=false, we do NOT add a path segment; children bubble up flat.
-	if !opts.PrefixNested {
-		return path
-	}
-	// Otherwise, use the field JSON name as path prefix
-	return joinPath(path, fieldName(f))
 }
 
 // ——— helpers (mostly identical to previous snippet) ———

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
+	"github.com/stefan79/openai-driver/pkg/output"
 
 	"github.com/stefan79/openai-driver/pkg/openai/responses/request"
 
@@ -17,8 +18,8 @@ type defaultClient struct {
 	httpClient net.HTTPClient
 }
 
-func NewClient(openApiKey, baseUrl string, proxy *string) (Client, error) {
-	httpClient, err := net.NewHTTPClient(openApiKey, baseUrl, proxy)
+func NewClient(o output.Outputter, openApiKey, baseUrl string, proxy *string) (Client, error) {
+	httpClient, err := net.NewHTTPClient(o, openApiKey, baseUrl, proxy)
 	if err != nil {
 		return nil, err
 	}

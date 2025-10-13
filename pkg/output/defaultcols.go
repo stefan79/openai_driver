@@ -19,6 +19,9 @@ func DefaultColumnsFromType(root any) ([]ColumnSpec, error) {
 	if err := walkColumns(rt, "", seen, &cols); err != nil {
 		return nil, err
 	}
+	if len(cols) == 0 {
+		return nil, fmt.Errorf("no table columns defined for type %s", rt.Name())
+	}
 	return cols, nil
 }
 
@@ -79,7 +82,13 @@ func walkColumns(t reflect.Type, prefix string, seen map[string]bool, cols *[]Co
 			}
 
 		case ft.Kind() == reflect.Struct && ft != timeType:
-			if err := walkColumns(ft, prefix, seen, cols); err != nil {
+			nextPrefix := prefix
+			if meta.Header != "" {
+				nextPrefix = joinPath(prefix, meta.Header)
+			} else {
+				nextPrefix = joinPath(prefix, fieldName(&f))
+			}
+			if err := walkColumns(ft, nextPrefix, seen, cols); err != nil {
 				return err
 			}
 
