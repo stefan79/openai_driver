@@ -46,11 +46,11 @@ func Execute() error {
 }
 
 func initCommand(cmd *cobra.Command, _ []string) error {
-	oer, err := initOutputter(cmd)
+	oer, err := initOutputter()
 	if err != nil {
 		return err
 	}
-	cfg, err := initConfig(cmd)
+	cfg, err := initConfig()
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func initCommand(cmd *cobra.Command, _ []string) error {
 	return nil
 }
 
-func initOutputter(cmd *cobra.Command) (output.Outputter, error) {
+func initOutputter() (output.Outputter, error) {
 	if verboseLevel < -1 || verboseLevel > 3 {
 		return nil, fmt.Errorf("invalid verbose level: %d. Needs to be between -1 and 3", verboseLevel)
 	}
@@ -71,7 +71,7 @@ func initOutputter(cmd *cobra.Command) (output.Outputter, error) {
 	return outputter, nil
 }
 
-func initConfig(cmd *cobra.Command) (*config.Config, error) {
+func initConfig() (*config.Config, error) {
 	v := viper.New()
 	cfg := config.Config{}
 

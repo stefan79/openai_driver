@@ -11,8 +11,9 @@ import (
 	"net/textproto"
 	"net/url"
 
-	"github.com/stefan79/openai-driver/pkg/output"
 	"strings"
+
+	"github.com/stefan79/openai-driver/pkg/output"
 )
 
 type defaultHTTPClient struct {
