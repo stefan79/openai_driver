@@ -5,6 +5,7 @@ import (
 
 	"github.com/stefan79/openai-driver/pkg/cli"
 	"github.com/stefan79/openai-driver/pkg/config"
+	"github.com/stefan79/openai-driver/pkg/output"
 
 	"github.com/spf13/cobra"
 )
@@ -21,11 +22,12 @@ var RetrieveFileCmd = &cobra.Command{
 	Short: "Retrieve file metadata",
 	Long:  `Retrieve metadata for a file`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		o, err := overlayRetrieveFlags(cmd, config.GetCfg(cmd))
+		o, err := overlayRetrieveFlags(cmd, config.GetCfg(cmd.Context()))
 		if err != nil {
 			return fmt.Errorf("Error overlaying flags: %v\n", err)
 		}
-		client, err := cli.NewFileClient(o.OpenAIAPIKey, o.BaseUrl, o.Proxy)
+		oer := output.GetOutputter(cmd.Context())
+		client, err := cli.NewFileClient(oer, o.OpenAIAPIKey, o.BaseUrl, o.Proxy)
 		if err != nil {
 			return fmt.Errorf("Error creating client: %v\n", err)
 		}

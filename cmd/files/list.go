@@ -5,6 +5,7 @@ import (
 
 	"github.com/stefan79/openai-driver/pkg/cli"
 	"github.com/stefan79/openai-driver/pkg/config"
+	"github.com/stefan79/openai-driver/pkg/output"
 
 	"github.com/spf13/cobra"
 )
@@ -21,8 +22,9 @@ var ListFilesCmd = &cobra.Command{
 	Short: "List files",
 	Long:  `List uploaded files`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		o := overlayListFlags(cmd, config.GetCfg(cmd))
-		client, err := cli.NewFileClient(o.OpenAIAPIKey, o.BaseUrl, o.Proxy)
+		o := overlayListFlags(cmd, config.GetCfg(cmd.Context()))
+		oer := output.GetOutputter(cmd.Context())
+		client, err := cli.NewFileClient(oer, o.OpenAIAPIKey, o.BaseUrl, o.Proxy)
 		if err != nil {
 			return fmt.Errorf("Error creating client: %v\n", err)
 		}

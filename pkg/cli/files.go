@@ -8,6 +8,7 @@ import (
 	"github.com/stefan79/openai-driver/pkg/builder"
 	"github.com/stefan79/openai-driver/pkg/client"
 	openaifiles "github.com/stefan79/openai-driver/pkg/openai/files"
+	"github.com/stefan79/openai-driver/pkg/output"
 )
 
 type FilesUploadOptions struct {
@@ -40,8 +41,8 @@ type FilesDeleteOptions struct {
 	FileID       string
 }
 
-func NewFileClient(apiKey, baseUrl string, proxy *string) (client.Client, error) {
-	return client.NewClient(apiKey, baseUrl, proxy)
+func NewFileClient(oer output.Outputter, apiKey, baseUrl string, proxy *string) (client.Client, error) {
+	return client.NewClient(oer, apiKey, baseUrl, proxy)
 }
 
 func FilesUploadCommand(ctx context.Context, client client.Client, registry builder.FilesRegistry, o *FilesUploadOptions) error {

@@ -10,6 +10,7 @@ import (
 	"github.com/stefan79/openai-driver/pkg/client"
 	openaifiles "github.com/stefan79/openai-driver/pkg/openai/files"
 	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
+	"github.com/stefan79/openai-driver/pkg/output"
 )
 
 func TestResponsesCreateCommand_NoOptions(t *testing.T) {
@@ -23,7 +24,7 @@ func TestResponsesCreateCommand_NoOptions(t *testing.T) {
 		Model: model,
 	}
 
-	if err := ResponsesCreateCommand(context.Background(), mockClient, builder.NewRegistry(), &o); err != nil {
+	if err := ResponsesCreateCommand(context.Background(), output.NewDefaultOutputter(), mockClient, builder.NewRegistry(), &o); err != nil {
 		t.Fatal(err)
 	}
 
@@ -51,7 +52,7 @@ func TestResponsesCreateCommand_WithPrompt(t *testing.T) {
 		},
 	}
 
-	if err := ResponsesCreateCommand(context.Background(), mockClient, registry, &o); err != nil {
+	if err := ResponsesCreateCommand(context.Background(), output.NewDefaultOutputter(), mockClient, registry, &o); err != nil {
 		t.Fatal(err)
 	}
 
@@ -161,7 +162,7 @@ func TestResponsesCreateCommand_WithReasoningSummary(t *testing.T) {
 		},
 	}
 
-	err = ResponsesCreateCommand(context.Background(), mockClient, registry, &o)
+	err = ResponsesCreateCommand(context.Background(), output.NewDefaultOutputter(), mockClient, registry, &o)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -194,7 +195,7 @@ func TestResponsesCreateCommand_WithWebSearch(t *testing.T) {
 		WebSearch: true,
 	}
 
-	err := ResponsesCreateCommand(context.Background(), mockClient, registry, &o)
+	err := ResponsesCreateCommand(context.Background(), output.NewDefaultOutputter(), mockClient, registry, &o)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -228,7 +229,7 @@ func TestResponsesCreateCommand_WithWebSearchContextSize(t *testing.T) {
 		WebSearchContextSize: &size,
 	}
 
-	err := ResponsesCreateCommand(context.Background(), mockClient, registry, &o)
+	err := ResponsesCreateCommand(context.Background(), output.NewDefaultOutputter(), mockClient, registry, &o)
 	if err != nil {
 		t.Fatal(err)
 	}

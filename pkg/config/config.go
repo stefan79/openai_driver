@@ -1,14 +1,10 @@
 package config
 
-import (
-	"context"
+import "context"
 
-	"github.com/spf13/cobra"
-)
+type CtxKey int
 
-type ctxKey int
-
-const cfgKey ctxKey = 1
+const CfgKey CtxKey = 1
 
 type Config struct {
 	OpenAI     OpenAIConfig `mapstructure:"openai"`
@@ -30,11 +26,10 @@ type Console struct {
 	Output string `mapstructure:"output"`
 }
 
-func GetCfg(cmd *cobra.Command) *Config {
-	return cmd.Context().Value(cfgKey).(*Config)
+func GetCfg(ctx context.Context) *Config {
+	return ctx.Value(CfgKey).(*Config)
 }
 
-func SetContext(cmd *cobra.Command, cfg *Config) {
-	ctx := context.WithValue(cmd.Context(), cfgKey, cfg)
-	cmd.SetContext(ctx)
+func SetCfg(ctx context.Context, cfg *Config) context.Context {
+	return context.WithValue(ctx, CfgKey, cfg)
 }

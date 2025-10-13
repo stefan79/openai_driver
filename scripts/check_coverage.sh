@@ -9,6 +9,7 @@ MIN_COVERAGE=(
     "driver/pkg/builder=60"
     "driver/pkg/cli=60"
     "driver/pkg/openai=50"
+    "driver/pkg/output=50"
     # Add more packages and their minimum coverage requirements here
 )
 

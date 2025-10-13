@@ -8,6 +8,7 @@ import (
 	"github.com/stefan79/openai-driver/pkg/builder"
 	"github.com/stefan79/openai-driver/pkg/cli"
 	"github.com/stefan79/openai-driver/pkg/config"
+	"github.com/stefan79/openai-driver/pkg/output"
 
 	"github.com/spf13/cobra"
 )
@@ -25,11 +26,12 @@ var UploadFileCmd = &cobra.Command{
 	Short: "Upload a file",
 	Long:  `Upload a file to OpenAI`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		o, err := overlayUploadFlags(cmd, config.GetCfg(cmd))
+		o, err := overlayUploadFlags(cmd, config.GetCfg(cmd.Context()))
 		if err != nil {
 			return fmt.Errorf("Error overlaying flags: %v\n", err)
 		}
-		client, err := cli.NewFileClient(o.OpenAIAPIKey, o.BaseUrl, o.Proxy)
+		oer := output.GetOutputter(cmd.Context())
+		client, err := cli.NewFileClient(oer, o.OpenAIAPIKey, o.BaseUrl, o.Proxy)
 		if err != nil {
 			return fmt.Errorf("Error creating client: %v\n", err)
 		}

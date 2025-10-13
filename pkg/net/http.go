@@ -10,27 +10,32 @@ import (
 	"net/http"
 	"net/textproto"
 	"net/url"
+
 	"strings"
+
+	"github.com/stefan79/openai-driver/pkg/output"
 )
 
 type defaultHTTPClient struct {
-	client  *http.Client
-	apiKey  string
-	baseUrl string
+	client    *http.Client
+	apiKey    string
+	baseUrl   string
+	outputter output.Outputter
 }
 
-func NewHTTPClient(openApiKey, baseUrl string, proxy *string) (HTTPClient, error) {
+func NewHTTPClient(o output.Outputter, openApiKey, baseUrl string, proxy *string) (HTTPClient, error) {
 	client := defaultHTTPClient{
-		client:  &http.Client{},
-		apiKey:  openApiKey,
-		baseUrl: baseUrl,
+		client:    &http.Client{},
+		apiKey:    openApiKey,
+		baseUrl:   baseUrl,
+		outputter: o,
 	}
 	if proxy != nil {
 		url, err := url.Parse(*proxy)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Printf("Using proxy: %s\n", url)
+		o.VMessage(fmt.Sprintf("Using Proxy: %s/n", *proxy))
 		client.client.Transport = &http.Transport{
 			Proxy: http.ProxyURL(url),
 		}
@@ -43,6 +48,7 @@ func (c *defaultHTTPClient) Do(ctx context.Context, req *OpenAIRequest) (*OpenAI
 	if err != nil {
 		return nil, err
 	}
+	c.outputter.VVMessage(fmt.Sprintf("Request: %s %s", httpReq.Method, httpReq.URL))
 	resp, err := c.client.Do(httpReq)
 	if err != nil {
 		return nil, err
@@ -53,6 +59,7 @@ func (c *defaultHTTPClient) Do(ctx context.Context, req *OpenAIRequest) (*OpenAI
 			log.Printf("error closing response body: %v", err)
 		}
 	}()
+	c.outputter.VVMessage(fmt.Sprintf("Response: %d %s", resp.StatusCode, resp.Status))
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("error code: %d", resp.StatusCode)
 	}

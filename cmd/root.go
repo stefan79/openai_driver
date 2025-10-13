@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/stefan79/openai-driver/pkg/config"
+	"github.com/stefan79/openai-driver/pkg/output"
 
 	"github.com/stefan79/openai-driver/cmd/files"
 	"github.com/stefan79/openai-driver/cmd/responses"
@@ -13,8 +14,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+type CtxKey int
+
+const CfgKey CtxKey = 1
+const OutputterKey CtxKey = 2
+
 var (
-	cfgFile string
+	verboseLevel int
+	cfgFile      string
 
 	rootCmd = &cobra.Command{
 		Use:   "oai",
@@ -23,13 +30,13 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("Use 'oai --help' for more information")
 		},
-		PersistentPreRunE: initConfig,
+		PersistentPreRunE: initCommand,
 	}
 )
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.oai.yaml)")
-
+	rootCmd.PersistentFlags().IntVar(&verboseLevel, "verbose", 3, "output format (default is json)")
 	rootCmd.AddCommand(responses.ResponsesCmd)
 	rootCmd.AddCommand(files.FilesCmd)
 }
@@ -38,7 +45,33 @@ func Execute() error {
 	return rootCmd.Execute()
 }
 
-func initConfig(cmd *cobra.Command, _ []string) error {
+func initCommand(cmd *cobra.Command, _ []string) error {
+	oer, err := initOutputter()
+	if err != nil {
+		return err
+	}
+	cfg, err := initConfig()
+	if err != nil {
+		return err
+	}
+	ctx := cmd.Context()
+	ctx = output.SetOutputter(ctx, oer)
+	ctx = config.SetCfg(ctx, cfg)
+	cmd.SetContext(ctx)
+	return nil
+}
+
+func initOutputter() (output.Outputter, error) {
+	if verboseLevel < -1 || verboseLevel > 3 {
+		return nil, fmt.Errorf("invalid verbose level: %d. Needs to be between -1 and 3", verboseLevel)
+	}
+	fmt.Println("Verbose level: ", verboseLevel)
+	outputter := output.NewDefaultOutputter()
+	outputter.SetLevel(verboseLevel)
+	return outputter, nil
+}
+
+func initConfig() (*config.Config, error) {
 	v := viper.New()
 	cfg := config.Config{}
 
@@ -51,7 +84,7 @@ func initConfig(cmd *cobra.Command, _ []string) error {
 	if cfgFile != "" {
 		v.SetConfigFile(cfgFile)
 		if err := v.ReadInConfig(); err != nil {
-			return fmt.Errorf("read config: %w", err)
+			return nil, fmt.Errorf("read config: %w", err)
 		}
 	} else {
 		v.SetConfigName("oai")
@@ -66,10 +99,8 @@ func initConfig(cmd *cobra.Command, _ []string) error {
 	v.AutomaticEnv()
 
 	if err := v.Unmarshal(&cfg); err != nil {
-		return fmt.Errorf("unmarshal config: %w", err)
+		return nil, fmt.Errorf("unmarshal config: %w", err)
 	}
 
-	config.SetContext(cmd, &cfg)
-
-	return nil
+	return &cfg, nil
 }
