@@ -28,7 +28,7 @@ type Client interface {
 	Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error)
 	Cancel(ctx context.Context, responseId string) error
 	UploadFile(ctx context.Context, options ...builder.FilesOption) (*openaifiles.File, error)
-	ListFiles(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error)
+	ListFiles(ctx context.Context, purpose *openaifiles.Purpose) (*openaifiles.ListResponse, error)
 	RetrieveFile(ctx context.Context, fileID string) (*openaifiles.File, error)
 	DeleteFile(ctx context.Context, fileID string) (*openaifiles.DeleteResponse, error)
 	DownloadFile(ctx context.Context, fileID string) ([]byte, error)

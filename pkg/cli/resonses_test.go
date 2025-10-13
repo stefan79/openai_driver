@@ -314,7 +314,7 @@ func (m *mockClient) UploadFile(ctx context.Context, options ...builder.FilesOpt
 	return nil, errors.New("not implemented")
 }
 
-func (m *mockClient) ListFiles(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error) {
+func (m *mockClient) ListFiles(ctx context.Context, purpose *openaifiles.Purpose) (*openaifiles.ListResponse, error) {
 	return nil, errors.New("not implemented")
 }
 

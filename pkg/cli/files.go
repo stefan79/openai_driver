@@ -46,7 +46,11 @@ func NewFileClient(apiKey, baseUrl string, proxy *string) (client.Client, error)
 
 func FilesUploadCommand(ctx context.Context, client client.Client, registry builder.FilesRegistry, o *FilesUploadOptions) error {
 	options := []builder.FilesOption{}
-	options = append(options, registry.Purpose(o.Purpose))
+	purpose, err := builder.ParseFilesPurpose(o.Purpose)
+	if err != nil {
+		return fmt.Errorf("invalid purpose: %w", err)
+	}
+	options = append(options, registry.Purpose(purpose))
 	options = append(options, registry.LocalFile(o.FileName, o.FileData))
 	file, err := client.UploadFile(ctx, options...)
 	if err != nil {
@@ -56,7 +60,16 @@ func FilesUploadCommand(ctx context.Context, client client.Client, registry buil
 }
 
 func FilesListCommand(ctx context.Context, client client.Client, o *FilesListOptions) error {
-	files, err := client.ListFiles(ctx, o.Purpose)
+	var purpose *openaifiles.Purpose
+	if o.Purpose != nil {
+		parsed, err := builder.ParseFilesPurpose(*o.Purpose)
+		if err != nil {
+			return fmt.Errorf("invalid purpose: %w", err)
+		}
+		converted := parsed.ToOpenAIPurpose()
+		purpose = &converted
+	}
+	files, err := client.ListFiles(ctx, purpose)
 	if err != nil {
 		return fmt.Errorf("Error listing files: %v\n", err)
 	}

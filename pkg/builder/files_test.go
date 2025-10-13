@@ -1,18 +1,22 @@
 package builder
 
-import "testing"
+import (
+	"testing"
+
+	openaifiles "github.com/stefan79/openai-driver/pkg/openai/files"
+)
 
 func TestFilesRegistryUpload(t *testing.T) {
 	registry := NewFilesRegistry()
 	data := []byte("content")
 	upload, err := registry.Upload(
-		registry.Purpose("fine-tune"),
+		registry.Purpose(FilesPurposeFineTune),
 		registry.LocalFile("test.txt", data),
 	)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	if upload.Purpose != "fine-tune" {
+	if upload.Purpose != openaifiles.PurposeFineTune {
 		t.Fatalf("expected purpose to be fine-tune, got %s", upload.Purpose)
 	}
 	if upload.FileName != "test.txt" {
@@ -34,13 +38,13 @@ func TestFilesRegistryUploadValidation(t *testing.T) {
 	if _, err := registry.Upload(registry.LocalFile("test.txt", []byte("content"))); err == nil {
 		t.Fatalf("expected error for missing purpose")
 	}
-	if _, err := registry.Upload(registry.Purpose("purpose")); err == nil {
+	if _, err := registry.Upload(registry.Purpose(FilesPurpose("purpose"))); err == nil {
 		t.Fatalf("expected error for missing file data")
 	}
-	if _, err := registry.Upload(registry.Purpose("purpose"), registry.LocalFile("", []byte("content"))); err == nil {
+	if _, err := registry.Upload(registry.Purpose(FilesPurpose("purpose")), registry.LocalFile("", []byte("content"))); err == nil {
 		t.Fatalf("expected error for empty filename")
 	}
-	if _, err := registry.Upload(registry.Purpose("purpose"), registry.LocalFile("file.txt", []byte{})); err == nil {
+	if _, err := registry.Upload(registry.Purpose(FilesPurpose("purpose")), registry.LocalFile("file.txt", []byte{})); err == nil {
 		t.Fatalf("expected error for empty data")
 	}
 }

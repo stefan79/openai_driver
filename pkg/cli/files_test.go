@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"mime"
+	"path/filepath"
 	"testing"
 
 	"github.com/stefan79/openai-driver/pkg/builder"
@@ -22,7 +24,7 @@ func TestFilesUploadCommand(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error applying options: %v", err)
 		}
-		if req.Purpose != "fine-tune" {
+		if req.Purpose != openaifiles.PurposeFineTune {
 			t.Fatalf("expected purpose fine-tune, got %s", req.Purpose)
 		}
 		if req.FileName != "test.txt" {
@@ -48,8 +50,8 @@ func TestFilesUploadCommand(t *testing.T) {
 
 func TestFilesListCommand(t *testing.T) {
 	client := &mockFileClient{}
-	var receivedPurpose *string
-	client.listFunc = func(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error) {
+	var receivedPurpose *openaifiles.Purpose
+	client.listFunc = func(ctx context.Context, purpose *openaifiles.Purpose) (*openaifiles.ListResponse, error) {
 		receivedPurpose = purpose
 		return &openaifiles.ListResponse{}, nil
 	}
@@ -58,7 +60,7 @@ func TestFilesListCommand(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	if receivedPurpose == nil || *receivedPurpose != purpose {
+	if receivedPurpose == nil || *receivedPurpose != openaifiles.PurposeFineTune {
 		t.Fatalf("expected purpose to be passed")
 	}
 }
@@ -95,13 +97,13 @@ type mockFileRegistry struct {
 	uploadCalled bool
 }
 
-func (m *mockFileRegistry) Purpose(purpose string) builder.FilesOption {
+func (m *mockFileRegistry) Purpose(purpose builder.FilesPurpose) builder.FilesOption {
 	return func(req *openaifiles.UploadRequest) error {
 		m.uploadCalled = true
 		if purpose == "" {
 			return fmt.Errorf("purpose is required")
 		}
-		req.Purpose = purpose
+		req.Purpose = purpose.ToOpenAIPurpose()
 		return nil
 	}
 }
@@ -110,8 +112,11 @@ func (m *mockFileRegistry) LocalFile(name string, data []byte) builder.FilesOpti
 	return func(req *openaifiles.UploadRequest) error {
 		m.uploadCalled = true
 		req.FileName = name
-		base64 := openai.NewBase64Bytes(data, "")
-		base64.SetMimeTypeFromFilename(name)
+		var mimeType string
+		if ext := filepath.Ext(name); ext != "" {
+			mimeType = mime.TypeByExtension(ext)
+		}
+		base64 := openai.NewBase64Bytes(data, mimeType)
 		req.File = base64
 		return nil
 	}
@@ -126,7 +131,7 @@ var _ builder.FilesRegistry = (*mockFileRegistry)(nil)
 
 type mockFileClient struct {
 	uploadFunc   func(ctx context.Context, options ...builder.FilesOption) (*openaifiles.File, error)
-	listFunc     func(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error)
+	listFunc     func(ctx context.Context, purpose *openaifiles.Purpose) (*openaifiles.ListResponse, error)
 	retrieveFunc func(ctx context.Context, fileID string) (*openaifiles.File, error)
 	deleteFunc   func(ctx context.Context, fileID string) (*openaifiles.DeleteResponse, error)
 }
@@ -138,7 +143,7 @@ func (m *mockFileClient) UploadFile(ctx context.Context, options ...builder.File
 	return m.uploadFunc(ctx, options...)
 }
 
-func (m *mockFileClient) ListFiles(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error) {
+func (m *mockFileClient) ListFiles(ctx context.Context, purpose *openaifiles.Purpose) (*openaifiles.ListResponse, error) {
 	if m.listFunc == nil {
 		return nil, errors.New("list not implemented")
 	}

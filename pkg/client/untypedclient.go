@@ -1,11 +1,9 @@
 package client
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"mime/multipart"
 	"net/url"
 
 	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
@@ -85,27 +83,19 @@ func (c *defaultClient) UploadFile(ctx context.Context, options ...builder.Files
 	if err := builder.ValidateFilesUploadRequest(req); err != nil {
 		return nil, err
 	}
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	fileWriter, err := writer.CreateFormFile("file", req.FileName)
-	if err != nil {
-		return nil, err
-	}
-	if _, err := fileWriter.Write(req.File.Data); err != nil {
-		return nil, err
-	}
-	if err := writer.WriteField("purpose", req.Purpose); err != nil {
-		return nil, err
-	}
-	if err := writer.Close(); err != nil {
-		return nil, err
-	}
-
 	request := net.OpenAIRequest{
-		Path:    "/v1/files",
-		Method:  "POST",
-		Body:    body.Bytes(),
-		Headers: map[string]string{"Content-Type": writer.FormDataContentType()},
+		Path:   "/v1/files",
+		Method: "POST",
+		FormValues: map[string]string{
+			"purpose": string(req.Purpose),
+		},
+		FormFiles: []net.FormFile{
+			{
+				FieldName: "file",
+				FileName:  req.FileName,
+				File:      req.File,
+			},
+		},
 	}
 	httpResponse, err := c.httpClient.Do(ctx, &request)
 	if err != nil {
@@ -118,11 +108,11 @@ func (c *defaultClient) UploadFile(ctx context.Context, options ...builder.Files
 	return file, nil
 }
 
-func (c *defaultClient) ListFiles(ctx context.Context, purpose *string) (*openAIFiles.ListResponse, error) {
+func (c *defaultClient) ListFiles(ctx context.Context, purpose *openAIFiles.Purpose) (*openAIFiles.ListResponse, error) {
 	path := "/v1/files"
 	if purpose != nil {
 		values := url.Values{}
-		values.Set("purpose", *purpose)
+		values.Set("purpose", string(*purpose))
 		path = fmt.Sprintf("%s?%s", path, values.Encode())
 	}
 	request := net.OpenAIRequest{

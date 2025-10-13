@@ -9,7 +9,7 @@ import (
 type FilesOption func(*files.UploadRequest) error
 
 type FilesRegistry interface {
-	Purpose(purpose string) FilesOption
+	Purpose(purpose FilesPurpose) FilesOption
 	LocalFile(name string, data []byte) FilesOption
 	Upload(options ...FilesOption) (*files.UploadRequest, error)
 }
@@ -20,7 +20,7 @@ func NewFilesRegistry() FilesRegistry {
 	return &filesRegistry{}
 }
 
-func (f *filesRegistry) Purpose(purpose string) FilesOption {
+func (f *filesRegistry) Purpose(purpose FilesPurpose) FilesOption {
 	return fileWithPurpose(purpose)
 }
 
