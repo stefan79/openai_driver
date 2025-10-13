@@ -82,7 +82,7 @@ func walkColumns(t reflect.Type, prefix string, seen map[string]bool, cols *[]Co
 			}
 
 		case ft.Kind() == reflect.Struct && ft != timeType:
-			nextPrefix := prefix
+			var nextPrefix string
 			if meta.Header != "" {
 				nextPrefix = joinPath(prefix, meta.Header)
 			} else {

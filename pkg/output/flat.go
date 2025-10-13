@@ -25,7 +25,7 @@ type Options struct {
 
 func DefaultOptions() Options {
 	return Options{
-		RowsetPath:   "",  // auto from table_children
+		RowsetPath:   "", // auto from table_children
 		PrefixNested: true,
 		SliceSummary: "join",
 		JoinSep:      ",",
