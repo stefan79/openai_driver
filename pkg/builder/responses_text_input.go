@@ -15,7 +15,7 @@ func responsesWithTextInput(text string) ResponsesOption {
 			Content: []request.BaseInputContent{
 				request.InputContentTypeTextDef{
 					Text: text,
-					Type: request.InputContentTypeImage,
+					Type: request.InputContentTypeText,
 				},
 			},
 		})
