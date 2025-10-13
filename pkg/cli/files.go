@@ -50,8 +50,7 @@ func FilesUploadCommand(ctx context.Context, client client.Client, registry buil
 	if err != nil {
 		return fmt.Errorf("invalid purpose: %w", err)
 	}
-	options = append(options, registry.Purpose(purpose))
-	options = append(options, registry.LocalFile(o.FileName, o.FileData))
+	options = append(options, registry.Purpose(purpose), registry.LocalFile(o.FileName, o.FileData))
 	file, err := client.UploadFile(ctx, options...)
 	if err != nil {
 		return fmt.Errorf("Error uploading file: %v\n", err)

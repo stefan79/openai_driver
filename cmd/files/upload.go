@@ -33,7 +33,7 @@ var UploadFileCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("Error creating client: %v\n", err)
 		}
-               if err := cli.FilesUploadCommand(cmd.Context(), client, builder.NewFilesRegistry(), &o); err != nil {
+		if err := cli.FilesUploadCommand(cmd.Context(), client, builder.NewFilesRegistry(), &o); err != nil {
 			return err
 		}
 		return nil

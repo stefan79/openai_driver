@@ -104,7 +104,7 @@ func mapOpenAIToHttp(req *OpenAIRequest, baseUrl, apiKey string) (*http.Request,
 				return nil, fmt.Errorf("form file data is required")
 			}
 			header := textproto.MIMEHeader{}
-			header.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, formFile.FieldName, formFile.FileName))
+			header.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%q"; filename="%q"`, formFile.FieldName, formFile.FileName))
 			if mimeType := formFile.File.MimeType; mimeType != "" {
 				header.Set("Content-Type", mimeType)
 			}

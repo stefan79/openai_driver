@@ -12,7 +12,7 @@ import (
 	"github.com/stefan79/openai-driver/pkg/client"
 	"github.com/stefan79/openai-driver/pkg/openai"
 	openaifiles "github.com/stefan79/openai-driver/pkg/openai/files"
-	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
+	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
 )
 
 func TestFilesUploadCommand(t *testing.T) {
@@ -168,7 +168,7 @@ func (m *mockFileClient) DownloadFile(ctx context.Context, fileID string) ([]byt
 	return nil, errors.New("download not implemented")
 }
 
-func (m *mockFileClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*resp.ResponseDef, error) {
+func (m *mockFileClient) Create(ctx context.Context, model string, options ...builder.ResponsesOption) (*response.ResponseDef, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -176,7 +176,7 @@ func (m *mockFileClient) CreateStream(ctx context.Context, model string, options
 	return nil, errors.New("not implemented")
 }
 
-func (m *mockFileClient) Retrieve(ctx context.Context, responseId string) (*resp.ResponseDef, error) {
+func (m *mockFileClient) Retrieve(ctx context.Context, responseId string) (*response.ResponseDef, error) {
 	return nil, errors.New("not implemented")
 }
 
