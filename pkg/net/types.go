@@ -5,9 +5,10 @@ import (
 )
 
 type OpenAIRequest struct {
-	Path   string
-	Method string
-	Body   []byte
+	Path    string
+	Method  string
+	Body    []byte
+	Headers map[string]string
 }
 
 type OpenAIResponse struct {

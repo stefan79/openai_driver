@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type defaultHTTPClient struct {
@@ -79,6 +80,17 @@ func mapOpenAIToHttp(req *OpenAIRequest, baseUrl, apiKey string) (*http.Request,
 		return nil, err
 	}
 	httpReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
-	httpReq.Header.Set("Content-Type", "application/json")
+	contentTypeSet := false
+	if req.Headers != nil {
+		for k, v := range req.Headers {
+			httpReq.Header.Set(k, v)
+			if strings.EqualFold(k, "Content-Type") {
+				contentTypeSet = true
+			}
+		}
+	}
+	if !contentTypeSet {
+		httpReq.Header.Set("Content-Type", "application/json")
+	}
 	return httpReq, nil
 }

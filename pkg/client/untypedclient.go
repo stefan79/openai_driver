@@ -1,12 +1,16 @@
 package client
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"mime/multipart"
+	"net/url"
 
 	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
 
+	openAIFiles "github.com/stefan79/openai-driver/pkg/openai/files"
 	openAIResp "github.com/stefan79/openai-driver/pkg/openai/responses"
 
 	"github.com/stefan79/openai-driver/pkg/builder"
@@ -71,4 +75,104 @@ func (c *defaultClient) Retrieve(ctx context.Context, responseId string) (*resp.
 
 func (c *defaultClient) Cancel(ctx context.Context, responseId string) error {
 	return fmt.Errorf("not implemented")
+}
+
+func (c *defaultClient) UploadFile(ctx context.Context, req *openAIFiles.UploadRequest) (*openAIFiles.File, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	fileWriter, err := writer.CreateFormFile("file", req.FileName)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := fileWriter.Write(req.FileData); err != nil {
+		return nil, err
+	}
+	if err := writer.WriteField("purpose", req.Purpose); err != nil {
+		return nil, err
+	}
+	if err := writer.Close(); err != nil {
+		return nil, err
+	}
+
+	request := net.OpenAIRequest{
+		Path:    "/v1/files",
+		Method:  "POST",
+		Body:    body.Bytes(),
+		Headers: map[string]string{"Content-Type": writer.FormDataContentType()},
+	}
+	httpResponse, err := c.httpClient.Do(ctx, &request)
+	if err != nil {
+		return nil, err
+	}
+	file := &openAIFiles.File{}
+	if err := json.Unmarshal(httpResponse.Body, file); err != nil {
+		return nil, err
+	}
+	return file, nil
+}
+
+func (c *defaultClient) ListFiles(ctx context.Context, purpose *string) (*openAIFiles.ListResponse, error) {
+	path := "/v1/files"
+	if purpose != nil {
+		values := url.Values{}
+		values.Set("purpose", *purpose)
+		path = fmt.Sprintf("%s?%s", path, values.Encode())
+	}
+	request := net.OpenAIRequest{
+		Path:   path,
+		Method: "GET",
+	}
+	httpResponse, err := c.httpClient.Do(ctx, &request)
+	if err != nil {
+		return nil, err
+	}
+	list := &openAIFiles.ListResponse{}
+	if err := json.Unmarshal(httpResponse.Body, list); err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+func (c *defaultClient) RetrieveFile(ctx context.Context, fileID string) (*openAIFiles.File, error) {
+	request := net.OpenAIRequest{
+		Path:   fmt.Sprintf("/v1/files/%s", fileID),
+		Method: "GET",
+	}
+	httpResponse, err := c.httpClient.Do(ctx, &request)
+	if err != nil {
+		return nil, err
+	}
+	file := &openAIFiles.File{}
+	if err := json.Unmarshal(httpResponse.Body, file); err != nil {
+		return nil, err
+	}
+	return file, nil
+}
+
+func (c *defaultClient) DeleteFile(ctx context.Context, fileID string) (*openAIFiles.DeleteResponse, error) {
+	request := net.OpenAIRequest{
+		Path:   fmt.Sprintf("/v1/files/%s", fileID),
+		Method: "DELETE",
+	}
+	httpResponse, err := c.httpClient.Do(ctx, &request)
+	if err != nil {
+		return nil, err
+	}
+	resp := &openAIFiles.DeleteResponse{}
+	if err := json.Unmarshal(httpResponse.Body, resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *defaultClient) DownloadFile(ctx context.Context, fileID string) ([]byte, error) {
+	request := net.OpenAIRequest{
+		Path:   fmt.Sprintf("/v1/files/%s/content", fileID),
+		Method: "GET",
+	}
+	httpResponse, err := c.httpClient.Do(ctx, &request)
+	if err != nil {
+		return nil, err
+	}
+	return httpResponse.Body, nil
 }

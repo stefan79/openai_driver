@@ -6,6 +6,7 @@ import (
 
 	"github.com/stefan79/openai-driver/pkg/config"
 
+	"github.com/stefan79/openai-driver/cmd/files"
 	"github.com/stefan79/openai-driver/cmd/responses"
 
 	"github.com/spf13/cobra"
@@ -30,6 +31,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.oai.yaml)")
 
 	rootCmd.AddCommand(responses.ResponsesCmd)
+	rootCmd.AddCommand(files.FilesCmd)
 }
 
 func Execute() error {

@@ -3,10 +3,12 @@ package cli
 import (
 	"bytes"
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/stefan79/openai-driver/pkg/builder"
 	"github.com/stefan79/openai-driver/pkg/client"
+	openaifiles "github.com/stefan79/openai-driver/pkg/openai/files"
 	"github.com/stefan79/openai-driver/pkg/openai/responses/resp"
 )
 
@@ -306,4 +308,24 @@ func (m *mockClient) Retrieve(ctx context.Context, responseId string) (*resp.Res
 
 func (m *mockClient) CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (client.StreamReader, error) {
 	return m.createStreamFunc(ctx, model, options...)
+}
+
+func (m *mockClient) UploadFile(ctx context.Context, req *openaifiles.UploadRequest) (*openaifiles.File, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (m *mockClient) ListFiles(ctx context.Context, purpose *string) (*openaifiles.ListResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (m *mockClient) RetrieveFile(ctx context.Context, fileID string) (*openaifiles.File, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (m *mockClient) DeleteFile(ctx context.Context, fileID string) (*openaifiles.DeleteResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (m *mockClient) DownloadFile(ctx context.Context, fileID string) ([]byte, error) {
+	return nil, errors.New("not implemented")
 }
