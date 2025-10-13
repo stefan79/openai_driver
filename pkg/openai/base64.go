@@ -3,8 +3,6 @@ package openai
 import (
 	"encoding/base64"
 	"encoding/json"
-	"mime"
-	"path/filepath"
 	"strings"
 )
 
@@ -60,12 +58,4 @@ func (b *Base64Bytes) UnmarshalJSON(data []byte) error {
 
 	b.Data = decoded
 	return nil
-}
-
-// SetMimeTypeFromFilename sets the MIME type based on the file extension
-func (b *Base64Bytes) SetMimeTypeFromFilename(filename string) {
-	ext := filepath.Ext(filename)
-	if ext != "" && b != nil {
-		b.MimeType = mime.TypeByExtension(ext)
-	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/stefan79/openai-driver/pkg/builder"
+	openaifiles "github.com/stefan79/openai-driver/pkg/openai/files"
 	"github.com/stefan79/openai-driver/pkg/openai/responses/response"
 )
 
@@ -26,6 +27,11 @@ type Client interface {
 	CreateStream(ctx context.Context, model string, options ...builder.ResponsesOption) (StreamReader, error)
 	Retrieve(ctx context.Context, responseId string) (*response.ResponseDef, error)
 	Cancel(ctx context.Context, responseId string) error
+	UploadFile(ctx context.Context, options ...builder.FilesOption) (*openaifiles.File, error)
+	ListFiles(ctx context.Context, purpose *openaifiles.Purpose) (*openaifiles.ListResponse, error)
+	RetrieveFile(ctx context.Context, fileID string) (*openaifiles.File, error)
+	DeleteFile(ctx context.Context, fileID string) (*openaifiles.DeleteResponse, error)
+	DownloadFile(ctx context.Context, fileID string) ([]byte, error)
 }
 
 type TypedClient[T any] interface {
